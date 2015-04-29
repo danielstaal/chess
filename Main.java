@@ -19,14 +19,9 @@ import java.io.*;
 public class Main extends ConsoleProgram
 {
 	/* Size of Chessboard*/
-	static final int chessBoardSize = 8;
-	
-	/* k coordinates */
-	GPoint kCoor;
-	
-	/* */
-	
-	/* */
+	static final int chessBoardSize = 4;
+		
+	/* Chessboard */
 	Chessboard chessBoard = new Chessboard(chessBoardSize);
 
 	public void run()
@@ -45,6 +40,10 @@ public class Main extends ConsoleProgram
 			blackMove();
 			println();
 			printChessboard();
+			if(!chessBoard.rookAlive)
+			{
+				println("Remis!");
+			}
 			readLine("?");
 			randomWhiteMove();
 			println();

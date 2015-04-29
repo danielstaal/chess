@@ -22,6 +22,9 @@ public class Chessboard extends ConsoleProgram
 	/* the chessboard array */
 	static char[][] CBarray;
 	
+	/* boolean rook is alive */
+	boolean rookAlive = true;
+	
 	/* boardsize */
 	static int size;
 		
@@ -60,7 +63,10 @@ public class Chessboard extends ConsoleProgram
 	{
 		CBarray[kx][ky] = 'k';
 		CBarray[Kx][Ky] = 'K';
-		CBarray[Rx][Ry] = 'R'; 
+		if(rookAlive)
+		{
+			CBarray[Rx][Ry] = 'R'; 
+		}
 	}
 	
 	public boolean movek()
@@ -98,6 +104,10 @@ public class Chessboard extends ConsoleProgram
         {   	
         	kx = testkx;
         	ky = testky;
+        	if(kx == Rx && ky == Ry)
+        	{
+        		rookAlive = false;
+        	}
         	fillEmptyChessboard();
         	addKRKtoChessboard();
         }
@@ -117,8 +127,8 @@ public class Chessboard extends ConsoleProgram
 	
 	private boolean notInCheckk(GPoint kCoor)
 	{
-		boolean K = checkK(kCoor);
-		boolean R = checkR(kCoor);
+		boolean K = notCheckK(kCoor);
+		boolean R = notCheckR(kCoor);
 		if(K && R)
 		{
 			return true;
@@ -126,7 +136,8 @@ public class Chessboard extends ConsoleProgram
 		return false;
 	}
 	
-	private boolean checkK(GPoint kCoor)
+	// k doesnt make a move so K attacks it
+	private boolean notCheckK(GPoint kCoor)
 	{
 		if((kCoor.getX() >= Kx-1 && kCoor.getX() <= Kx + 1) && (kCoor.getY() >= Ky-1 && kCoor.getY() <= Ky + 1))
 		{
@@ -135,13 +146,38 @@ public class Chessboard extends ConsoleProgram
 		return true;
 	}
 	
-	private boolean checkR(GPoint kCoor)
+	// k doesnt make a move so R attacks it
+	private boolean notCheckR(GPoint kCoor)
 	{
-		if(kCoor.getX() != Rx && kCoor.getY() != Ry)
+		// to check if rook is supported by white king
+		GPoint RCoor = new GPoint(Rx, Ry);
+		
+		if(kCoor.getX() == Rx || kCoor.getY() == Ry)
 		{
-			return true;
+			// check if rook is supported by K
+			if(kCoor.getX() == Rx && kCoor.getY() == Ry && notCheckK(RCoor))
+			{
+				return true;
+			}
+			else if(Ky == Ry)
+			{
+				// if king in between on x row
+				if((Kx < Rx && Kx > kCoor.getX()) || (Kx > Rx && Kx < kCoor.getX()))
+				{
+					return true;
+				}
+			}
+			else if(Kx == Rx)
+			{
+				// if king in between on x row
+				if((Ky < Ry && Ky > kCoor.getY()) || (Ky > Ry && Ky < kCoor.getY()))
+				{
+					return true;
+				}
+			}
+			return false;
 		} 
-		return false;
+		return true;
 	}
 	
 	/////////////////////////////////////////////////////////////////////
@@ -275,7 +311,7 @@ public class Chessboard extends ConsoleProgram
 	
 	private boolean notInCheckK(GPoint KCoor)
 	{
-		boolean K = checkk(KCoor);
+		boolean K = notCheckk(KCoor);
 		if(K)
 		{
 			return true;
@@ -283,7 +319,7 @@ public class Chessboard extends ConsoleProgram
 		return false;
 	}
 	
-	private boolean checkk(GPoint kCoor)
+	private boolean notCheckk(GPoint kCoor)
 	{
 		if((kCoor.getX() >= kx-1 && kCoor.getX() <= kx + 1) && (kCoor.getY() >= ky-1 && kCoor.getY() <= ky + 1))
 		{
@@ -300,6 +336,7 @@ public class Chessboard extends ConsoleProgram
 		}
 		return false;
 	}
+
 	
 	public int getkx()
 	{
