@@ -1,7 +1,7 @@
 CLASSPATH = acm.jar
 CFLAGS = -cp .:$(CLASSPATH)
 
-JAVA_FILES = Main.java
+JAVA_FILES = Main.java Chessboard.java
 CLASS_FILES = $(JAVA_FILES:.java=.class)
 
 all: Main
