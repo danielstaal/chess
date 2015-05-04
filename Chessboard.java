@@ -3,7 +3,7 @@
  * -------------------
  * Name: Daniel Staal
  * 
- * This file will eventually implement the game of Chess.
+ * In this file the chessBoard is described
  */
 
 import acm.graphics.*;
@@ -25,27 +25,38 @@ public class Chessboard extends ConsoleProgram
 	/* boolean rook is alive */
 	boolean rookAlive = true;
 	
-	/* boardsize */
-	static int size;
+	/* checkmate */
+	boolean checkMate = false;
+	
+	/* Stalemate */
+	boolean staleMate = false;
+	
+	/* Size of Chessboard*/
+	static final int size = 8;
 		
 	/* k starting position */
-	private int kx = 0;
-	private int ky = 0;
+	private int kx;
+	private int ky;
 	/* K starting position */
-	private int Kx = 2;
-	private int Ky = 2;
-	/* k starting position */
-	private int Rx = 3;
-	private int Ry = 3;
+	private int Kx;
+	private int Ky;
+	/* R starting position */
+	private int Rx;
+	private int Ry;
+	
+	public Chessboard(BoardPosition boardPos)
+	{
+		CBarray = new char[size][size];
+		kx = (int)boardPos.getk().getX();
+		ky = (int)boardPos.getk().getY();
+		Kx = (int)boardPos.getK().getX();
+		Ky = (int)boardPos.getK().getY();
+		Rx = (int)boardPos.getR().getX();
+		Ry = (int)boardPos.getR().getY();
+	}
 	
 	public Chessboard()
 	{
-	}
-	
-	public Chessboard(int boardSize)
-	{
-		size = boardSize;
-		CBarray = new char[size][size];
 	}
 	
 	public void fillEmptyChessboard()
@@ -69,50 +80,80 @@ public class Chessboard extends ConsoleProgram
 		}
 	}
 	
-	public boolean movek()
+	public void movek()
 	{
 		int random = randInt(1,8);
 		int testkx = kx;
 		int testky = ky;
+		boolean legalMove = false;
 		
-		switch (random) {
-            case 1:  testkx--;
-            		 testky--;
-                     break;
-            case 2:  testky--;
-                     break;
-            case 3:  testkx++;
-            		 testky--;
-                     break;
-            case 4:  testkx--;
-                     break;
-            case 5:  testkx++;
-                     break;
-            case 6:  testkx--;
-            		 testky++;
-                     break;
-            case 7:  testky++;
-                     break;
-            case 8:  testkx++;
-            		 testky++;
-                     break;
-        }
-        GPoint kCoor = new GPoint(testkx, testky);
-        boolean legalMove = checkIfLegalMovek(kCoor);
-             
-        if(legalMove)
-        {   	
-        	kx = testkx;
-        	ky = testky;
-        	if(kx == Rx && ky == Ry)
-        	{
-        		rookAlive = false;
-        	}
-        	fillEmptyChessboard();
-        	addKRKtoChessboard();
-        }
-        return legalMove;
-	}
+		GPoint oldkCoor = new GPoint(kx, ky);
+		
+		int[] tried = new int[8];
+		int[] all = {1,2,3,4,5,6,7,8};
+		
+		while(!legalMove)
+		{
+			testkx = kx;
+			testky = ky;
+			random = randInt(1,8);
+	
+			if(sameArray(tried, all))
+			{
+				if(notInCheckk(oldkCoor))
+				{
+					staleMate = true;
+				}
+				else{checkMate = true;}
+				break;
+			}
+		
+			switch (random) {
+		        case 1:  testkx--;
+		        		 testky--;
+		                 break;
+		        case 2:  testky--;
+		                 break;
+		        case 3:  testkx++;
+		        		 testky--;
+		                 break;
+		        case 4:  testkx--;
+		                 break;
+		        case 5:  testkx++;
+		                 break;
+		        case 6:  testkx--;
+		        		 testky++;
+		                 break;
+		        case 7:  testky++;
+		                 break;
+		        case 8:  testkx++;
+		        		 testky++;
+		                 break;
+		    }
+		    GPoint kCoor = new GPoint(testkx, testky);
+		    legalMove = checkIfLegalMovek(kCoor);
+		         
+		    if(legalMove)
+		    {   	
+		    	kx = testkx;
+		    	ky = testky;
+		    	if(kx == Rx && ky == Ry)
+		    	{
+		    		rookAlive = false;
+		    	}
+		    	fillEmptyChessboard();
+		    	addKRKtoChessboard();
+		    }
+		    else
+		    {
+		    	tried[random-1] = random;
+		    }
+		    if(!rookAlive)
+		    {
+		    	break;
+		    }
+     	}
+    }
 	
 	private boolean checkIfLegalMovek(GPoint kCoor)
 	{
@@ -338,6 +379,20 @@ public class Chessboard extends ConsoleProgram
 	}
 
 	
+	private boolean sameArray(int[] A, int[] B)
+	{
+		boolean result = true;
+		for(int i=0; i<A.length;i++)
+		{
+			if(A[i] != B[i])
+			{
+				return false;
+			}
+		}
+		
+		return result;
+	}
+	
 	public int getkx()
 	{
 		return kx;
@@ -375,6 +430,78 @@ public class Chessboard extends ConsoleProgram
 
     return randomNum;
 	}	
+	
+	public ArrayList<BoardPosition> findAllPosNextStates()
+	{
+		ArrayList<BoardPosition> posPositions = new ArrayList<BoardPosition>();
+		
+		
+		return posPositions;
+	}
+	
+	
+/////////////////////////////////////////////////////////////////////////
+// Feature calculation
+/////////////////////////////////////////////////////////////////////////
+	
+	// FEATURE: num of pos squares k
+	public int noOfPosSquaresk()
+	{
+		int numOfPosSquares = 0;	
+		
+		GPoint kCoor;
+		boolean legalMove;
+		
+		kCoor = new GPoint(kx-1, ky-1);
+		if(checkIfLegalMovek(kCoor))
+		{
+			numOfPosSquares++;
+		}
+		
+		kCoor = new GPoint(kx, ky-1);
+		if(checkIfLegalMovek(kCoor))
+		{
+			numOfPosSquares++;
+		}
+		
+		kCoor = new GPoint(kx-1, ky);
+		if(checkIfLegalMovek(kCoor))
+		{
+			numOfPosSquares++;
+		}
+		
+		kCoor = new GPoint(kx+1, ky+1);
+		if(checkIfLegalMovek(kCoor))
+		{
+			numOfPosSquares++;
+		}
+		
+		kCoor = new GPoint(kx+1, ky-1);
+		if(checkIfLegalMovek(kCoor))
+		{
+			numOfPosSquares++;
+		}
+		
+		kCoor = new GPoint(kx-1, ky+1);
+		if(checkIfLegalMovek(kCoor))
+		{
+			numOfPosSquares++;
+		}
+		
+		kCoor = new GPoint(kx, ky+1);
+		if(checkIfLegalMovek(kCoor))
+		{
+			numOfPosSquares++;
+		}
+		
+		kCoor = new GPoint(kx+1, ky);
+		if(checkIfLegalMovek(kCoor))
+		{
+			numOfPosSquares++;
+		}
+                 
+        return numOfPosSquares;
+	}
 }
 
 
