@@ -303,38 +303,42 @@ public class Chessboard extends ConsoleProgram
 		int testkx = Kx;
 		int testky = Ky;
 		
-		switch (random) {
-            case 1:  testkx--;
-            		 testky--;
-                     break;
-            case 2:  testky--;
-                     break;
-            case 3:  testkx++;
-            		 testky--;
-                     break;
-            case 4:  testkx--;
-                     break;
-            case 5:  testkx++;
-                     break;
-            case 6:  testkx--;
-            		 testky++;
-                     break;
-            case 7:  testky++;
-                     break;
-            case 8:  testkx++;
-            		 testky++;
-                     break;
+		for(int i=1; i<9;i++)
+		{
+			switch (i) {
+		        case 1:  testkx = kx-1;
+		        		 testky = ky-1;
+		                 break;
+		        case 2:  testky = ky-1;
+		                 break;
+		        case 3:  testkx = kx+1;
+		        		 testky = ky-1;
+		                 break;
+		        case 4:  testkx = kx-1;
+		                 break;
+		        case 5:  testkx = kx+1;
+		                 break;
+		        case 6:  testkx = kx-1;
+		        		 testky = ky+1;
+		                 break;
+		        case 7:  testky = ky+1;
+		                 break;
+		        case 8:  testkx = kx+1;
+		        		 testky = ky+1;
+		                 break;
+		   	}
+		   	GPoint KCoor = new GPoint(testkx, testky);
+        	boolean legalMove = checkIfLegalMoveK(KCoor); 
+	             
+		    if(legalMove)
+		    {   	
+		    	testkx;
+		    	testky;
+		    	//fillEmptyChessboard();
+		    	//addKRKtoChessboard();
+		    }
         }
-        GPoint KCoor = new GPoint(testkx, testky);
-        boolean legalMove = checkIfLegalMoveK(KCoor);
-             
-        if(legalMove)
-        {   	
-        	Kx = testkx;
-        	Ky = testky;
-        	fillEmptyChessboard();
-        	addKRKtoChessboard();
-        }
+
         return legalMove;
 	}
 	
