@@ -28,9 +28,9 @@ public class Main extends ConsoleProgram
 /////////////////////////////////////////////////////////////////////////
 	
 	/* Standard initial positions */
-	private GPoint k = new GPoint(0,0);
-	private GPoint K = new GPoint(3,3);
-	private GPoint R = new GPoint(5,5);
+	private GPoint k = new GPoint(2,0);
+	private GPoint K = new GPoint(0,2);
+	private GPoint R = new GPoint(0,0);
 	
 	/* inition BoardPosition */
 	BoardPosition initPos = new BoardPosition(k, K, R);
@@ -48,7 +48,11 @@ public class Main extends ConsoleProgram
 	private boolean printing = false;
 	
 	/* number of games to be played by the agents */
-	private int numberOfGames = 10;
+	private double numberOfGames = 5;
+	
+	/* Mean number of moves per game */
+	private int numOfMoves;
+	private double mean = 0.0; 
 	
 	/* checkmates,stalemates,remis */
 	private int checkMates = 0;
@@ -60,7 +64,9 @@ public class Main extends ConsoleProgram
 	ArrayList<Double> featureValues = new ArrayList<Double>(); 
 
 /////////////////////////////////////////////////////////////////////////
-// Random chess playing
+// Main function
+//	- playing the game
+//	- measuring time
 /////////////////////////////////////////////////////////////////////////
 
 	public void run()
@@ -88,23 +94,18 @@ public class Main extends ConsoleProgram
 		print("Time:");print(duration);print("seconds");
 	}
 	
-	private void initiateParVector()
-	{
-//			FEATURE Weights:
-//				no.1: legal squares for black king		
-		parVector.add(0.5);
-//				no.2: 	
-	}
+/////////////////////////////////////////////////////////////////////////
+// Chess playing
+/////////////////////////////////////////////////////////////////////////
 	
 	private void playAGame()
 	{
-		chessBoard.fillEmptyChessboard();
-		chessBoard.addKRKtoChessboard();
 		if(printing)
 		{
 			printChessboard();
 		}
 		playMoves();
+		mean += numOfMoves;
 		checkWhatEnding();
 	}
 	
@@ -138,38 +139,26 @@ public class Main extends ConsoleProgram
 		
 	private void playMoves()
 	{
-		int moves;
+		numOfMoves = 0;
 		posSquaresk = new ArrayList<Integer>();
 		
 		while(true)
 		{
-			//readLine("?");
 			blackMove();
 			
-			if(chessBoard.checkMate)
-			{
-				//println("Checkmate!");
-				break;
-			}
-			else if(chessBoard.staleMate)
-			{
-				//println("Stalemate!");
-				break;
-			}
-			else if(!chessBoard.rookAlive)
-			{
-				//println("Remis!");
-				break;
-			}
 			if(printing)
 			{
 				println();
 				printChessboard();
 			}
-			//readLine("?");
-			randomWhiteMove();
-			// whiteMove();
 			
+			if(chessBoard.checkMate || chessBoard.staleMate || !chessBoard.rookAlive)
+			{
+				break;
+			}
+	
+			//randomWhiteMove();
+			whiteMove();
 			
 			// FEATURE: number of pos squares for k
 			//posSquaresk.add(chessBoard.noOfPosSquaresk());
@@ -179,28 +168,31 @@ public class Main extends ConsoleProgram
 				println();
 				printChessboard();
 			}
+			numOfMoves++;
 		}
 	}	
 	
 	private void blackMove()
 	{
-		chessBoard.movek();
+		chessBoard.randomMovek();
 	}
 	
+	// NOTE: is te veranderen in random uit findAllPosNextStates
 	private void randomWhiteMove()
 	{
 		// choose random piece
 		int rand = chessBoard.randInt(0,1);
 		boolean legalMove = false;
 		
+		// maybe not most efficient with while loop
 		while(!legalMove)
 		{
 			if(rand == 0)
 			{
-				legalMove = chessBoard.moveR();
+				legalMove = chessBoard.randomMoveR();
 			}else
 			{
-				legalMove = chessBoard.moveK();
+				legalMove = chessBoard.randomMoveK();
 			}
 			rand = chessBoard.randInt(0,1);
 		}
@@ -210,93 +202,74 @@ public class Main extends ConsoleProgram
 	{
 		findBestMove();
 	}	
+
+
+
+/////////////////////////////////////////////////////////////////////////
+// Reward function
+/////////////////////////////////////////////////////////////////////////
 	
 	private void findBestMove()
 	{
-		//findAllPosNextStates();
-		//calcAllRewards();
-		//pickBestMove();
+		ArrayList<BoardPosition> allPosNextMoves;
+		allPosNextMoves = chessBoard.findAllPosNextStates();
+		
+		BoardPosition bestMove = findHighestReward(allPosNextMoves);
 		//if(RewardIsAboveThreshold());
-	}
 		
-	private void printChessboard()
+		// NOTE: the random black king move that was used to calculate the 
+		// reward is not the final choice of the opponent agent
+		chessBoard = new Chessboard(bestMove);
+	}
+	
+	public BoardPosition findHighestReward(ArrayList<BoardPosition> allPosNextMoves)
 	{
-		for(int j=0; j<chessBoard.size; j++)
+		double reward = 0.0;
+		double thisReward;
+		BoardPosition bestBoardPosition = null;
+		
+		for(int i=0;i<allPosNextMoves.size();i++)
 		{
-			for(int i=0; i<chessBoard.size; i++)
+			thisReward = calcReward(allPosNextMoves.get(i));
+			if(thisReward > reward)
 			{
-				print(chessBoard.CBarray[i][j]);
-				print(" ");
+				reward = thisReward;
+				bestBoardPosition = allPosNextMoves.get(i);
 			}
-			println();
 		}
-	}	
-	
 		
-	private void resetBoard()
-	{
-		chessBoard = new Chessboard();
+		return bestBoardPosition;
 	}
-	
-	private void printResult()
-	{
-		println("all games played");
-		print("checkmates:");println(checkMates);
-		print("stalemates:");println(staleMates);
-		print("remis:");println(remis);
-	}
-	
-	private void writeFilePosSquaresk()
-	{
-		// FEATURE: num pos squares
-		String stringPosSquaresk = "";
-		for(int i=0; i<posSquaresk.size();i++)
-		{
-			stringPosSquaresk += posSquaresk.get(i);
-		}
-		fileWriting(stringPosSquaresk);
-	}
-	
-	
-/////////////////////////////////////////////////////////////////////////
-// File writing and File reading
-// 
-// - the learning process will be computed below using Bufferedwriters
-//   and bufferedreaders
-/////////////////////////////////////////////////////////////////////////
-	
-	private void fileWriting(String content)
-	{
-		String fileName = "testData" + numberOfDataFile + ".txt";
-		// to increment the name of the datafile
-		numberOfDataFile++;
 		
-		try {
- 
-			File file = new File("/home/jharvard/java/chess/data/" + fileName);
- 
-			// if file doesnt exists, then create it
-			if (!file.exists()) {
-				file.createNewFile();
-			}
- 
-			FileWriter fw = new FileWriter(file.getAbsoluteFile());
-			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(content);
-			bw.close();
- 
-			System.out.println("Done");
- 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	private double calcReward(BoardPosition pos)
+	{
+		double reward = 0.0;
+		
+		Chessboard thisBoard = new Chessboard(pos);
+		
+		// make a random move with the black king
+		thisBoard.randomMovek();
+		
+		// Feature no.1
+		reward += parVector.get(0) * thisBoard.noOfPosSquaresk();
+		// Feature no.2
+		
+		return reward;
 	}
 	
 
 /////////////////////////////////////////////////////////////////////////
 // Data Learning
 /////////////////////////////////////////////////////////////////////////
-
+	
+	private void initiateParVector()
+	{
+//			FEATURE Weights:
+//				no.1: legal squares for black king		
+		parVector.add(0.5);
+//				no.2: 	
+	}
+	
 	private void learnOnData()
 	{
 			// updating the parameters	
@@ -308,20 +281,6 @@ public class Main extends ConsoleProgram
 		double lambda = 0.7;
 		
 		//updateParameters(learningRate, tempDif, correctiondt, gradJ, lambda);
-	}
-	
-	private double calcRewardFunction(Chessboard board)
-	{
-		double reward = 0;
-		
-		for(int i=0; i<parVector.size(); i++)
-		{
-			// Feature no.1
-			reward += parVector.get(i) * board.noOfPosSquaresk();
-			// Feature no.2
-		}
-
-		return reward;
 	}
 	
 	private double calcTempDif()
@@ -360,7 +319,82 @@ public class Main extends ConsoleProgram
 // Feature calculation
 /////////////////////////////////////////////////////////////////////////
 
+	
+	
+	
+/////////////////////////////////////////////////////////////////////////
+//  Printing results and chessboard
+//  
+//	File writing and File reading
+// 
+// - the learning process will be computed below using Bufferedwriters
+//   and bufferedreaders
+/////////////////////////////////////////////////////////////////////////
 
+	private void printChessboard()
+	{
+		for(int j=0; j<chessBoard.getCBSize(); j++)
+		{
+			for(int i=0; i<chessBoard.getCBSize(); i++)
+			{
+				print(chessBoard.getCBarray()[i][j]);
+				print(" ");
+			}
+			println();
+		}
+	}	
+	
+	private void resetBoard()
+	{
+		chessBoard = new Chessboard(initPos);
+	}
+	
+	private void printResult()
+	{
+		println("all games played");
+		print("checkmates:");println(checkMates);
+		print("stalemates:");println(staleMates);
+		print("remis:");println(remis);
+		print("Mean number of moves:");println(mean/numberOfGames);
+	}
+	
+	private void writeFilePosSquaresk()
+	{
+		// FEATURE: num pos squares
+		String stringPosSquaresk = "";
+		for(int i=0; i<posSquaresk.size();i++)
+		{
+			stringPosSquaresk += posSquaresk.get(i);
+		}
+		fileWriting(stringPosSquaresk);
+	}
+	
+	private void fileWriting(String content)
+	{
+		String fileName = "testData" + numberOfDataFile + ".txt";
+		// to increment the name of the datafile
+		numberOfDataFile++;
+		
+		try {
+ 
+			File file = new File("/home/jharvard/java/chess/data/" + fileName);
+ 
+			// if file doesnt exists, then create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+ 
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(content);
+			bw.close();
+ 
+			System.out.println("Done");
+ 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
 
 

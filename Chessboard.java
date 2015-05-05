@@ -20,7 +20,7 @@ public class Chessboard extends ConsoleProgram
 {
 
 	/* the chessboard array */
-	static char[][] CBarray;
+	private char[][] CBarray;
 	
 	/* boolean rook is alive */
 	boolean rookAlive = true;
@@ -32,7 +32,7 @@ public class Chessboard extends ConsoleProgram
 	boolean staleMate = false;
 	
 	/* Size of Chessboard*/
-	static final int size = 8;
+	private int size = 4;
 		
 	/* k starting position */
 	private int kx;
@@ -44,6 +44,8 @@ public class Chessboard extends ConsoleProgram
 	private int Rx;
 	private int Ry;
 	
+	
+	// Constructors
 	public Chessboard(BoardPosition boardPos)
 	{
 		CBarray = new char[size][size];
@@ -53,12 +55,19 @@ public class Chessboard extends ConsoleProgram
 		Ky = (int)boardPos.getK().getY();
 		Rx = (int)boardPos.getR().getX();
 		Ry = (int)boardPos.getR().getY();
+		fillEmptyChessboard();
+		addKRKtoChessboard();
 	}
-	
 	public Chessboard()
 	{
 	}
+
+
 	
+/////////////////////////////////////////////////////////////////////////
+// Rearranging the Chessboard
+/////////////////////////////////////////////////////////////////////////
+
 	public void fillEmptyChessboard()
 	{
 		for(int j=0; j<CBarray.length; j++)
@@ -80,7 +89,13 @@ public class Chessboard extends ConsoleProgram
 		}
 	}
 	
-	public void movek()
+	
+	
+/////////////////////////////////////////////////////////////////////////
+// Moving the black king
+/////////////////////////////////////////////////////////////////////////	
+	
+	public void randomMovek()
 	{
 		int random = randInt(1,8);
 		int testkx = kx;
@@ -89,6 +104,7 @@ public class Chessboard extends ConsoleProgram
 		
 		GPoint oldkCoor = new GPoint(kx, ky);
 		
+		// to check if the black king has no moves
 		int[] tried = new int[8];
 		int[] all = {1,2,3,4,5,6,7,8};
 		
@@ -100,7 +116,7 @@ public class Chessboard extends ConsoleProgram
 	
 			if(sameArray(tried, all))
 			{
-				if(notInCheckk(oldkCoor))
+				if(kingNotInCheck(oldkCoor))
 				{
 					staleMate = true;
 				}
@@ -157,7 +173,7 @@ public class Chessboard extends ConsoleProgram
 	
 	private boolean checkIfLegalMovek(GPoint kCoor)
 	{
-		boolean check = notInCheckk(kCoor);
+		boolean check = kingNotInCheck(kCoor);
 		boolean on = onChessBoard(kCoor);
 		if(check && on)
 		{	
@@ -166,7 +182,7 @@ public class Chessboard extends ConsoleProgram
 		return false;
 	}
 	
-	private boolean notInCheckk(GPoint kCoor)
+	private boolean kingNotInCheck(GPoint kCoor)
 	{
 		boolean K = notCheckK(kCoor);
 		boolean R = notCheckR(kCoor);
@@ -221,58 +237,118 @@ public class Chessboard extends ConsoleProgram
 		return true;
 	}
 	
-	/////////////////////////////////////////////////////////////////////
-	//  White pieces
-	/////////////////////////////////////////////////////////////////////
-	public boolean moveR()
+	
+	
+/////////////////////////////////////////////////////////////////////
+//  Moving the white pieces
+/////////////////////////////////////////////////////////////////////
+	
+	public boolean randomMoveR()
 	{
+		ArrayList<BoardPosition> posMovesR = posMovesR();
+
+		System.out.println(posMovesR.size()); 
+		
+		if(posMovesR.size() == 0)
+		{
+			return false;
+		}
+		int rand = randInt(0,posMovesR.size()-1);
+		BoardPosition boardPos = posMovesR.get(rand);
+		
+		Rx = (int)boardPos.getR().getX();
+		Ry = (int)boardPos.getR().getY();
+		
+		fillEmptyChessboard();
+		addKRKtoChessboard();
+
+		return true;
+	}
+	
+	public ArrayList<BoardPosition> posMovesR()
+	{
+		ArrayList<BoardPosition> posMovesR = new ArrayList<BoardPosition>();
 		int testRx = Rx;
 		int testRy = Ry;
-		while(testRx == Rx && testRy == Ry)
+	
+	   	GPoint RCoor;
+		
+		if(Ry == Ky)
 		{
-			int randxy = randInt(0,1);
-			if(randxy == 0)
+			if(Rx < Kx)
 			{
-				if(Ry == Ky)
+				for(testRx=0;testRx<Kx;testRx++)
 				{
-					if(Rx < Kx)
-					{
-						testRx = randInt(0, Kx-1);
-					}
-					else
-					{
-						testRx = randInt(Kx+1, 7);
-					}
+					RCoor = new GPoint(testRx, testRy);
+					posMovesR = checkAddRookBoardPosition(RCoor, posMovesR);
 				}
-				else{testRx = randInt(0,7);}
 			}
-			else
+			else if(Rx > Kx)
 			{
-				if(Rx == Kx)
+				for(testRx=Kx+1;testRx<size;testRx++)
 				{
-					if(Ry < Ky)
-					{
-						testRy = randInt(0, Ky-1);
-					}
-					else
-					{
-						testRy = randInt(Ky+1, 7);
-					}
+					RCoor = new GPoint(testRx, testRy);
+					posMovesR = checkAddRookBoardPosition(RCoor, posMovesR);
 				}
-				else{testRy = randInt(0,7);}
 			}
 		}
-		GPoint RCoor = new GPoint(testRx, testRy);
-		boolean legalMove = checkIfLegalMoveR(RCoor);
+		else
+		{
+			for(testRx=0;testRx<size;testRx++)
+			{
+				RCoor = new GPoint(testRx, testRy);
+				posMovesR = checkAddRookBoardPosition(RCoor, posMovesR);
+			}
+		}
 		
+		// reset testRx
+		testRx = Rx;
+		 
+		if(Rx == Kx)
+		{
+			if(Ry < Ky)
+			{
+				for(testRy=0;testRy<Ky;testRy++)
+				{
+					RCoor = new GPoint(testRx, testRy);
+					posMovesR = checkAddRookBoardPosition(RCoor, posMovesR);
+				}
+			}
+			else if(Ry > Ky)
+			{
+				for(testRy=Ky+1;testRy<size;testRy++)
+				{
+					RCoor = new GPoint(testRx, testRy);
+					posMovesR = checkAddRookBoardPosition(RCoor, posMovesR);
+				}
+			}
+		}
+		else
+		{
+			for(testRy=0;testRy<size;testRy++)
+			{
+				RCoor = new GPoint(testRx, testRy);
+				posMovesR = checkAddRookBoardPosition(RCoor, posMovesR);
+			}
+		}
+		
+		return posMovesR;
+	}
+	
+	private ArrayList<BoardPosition> checkAddRookBoardPosition(GPoint RCoor, ArrayList<BoardPosition> posMovesR)
+	{
+		BoardPosition boardPos;
+			
+		GPoint kCoor = new GPoint(kx, ky);
+		GPoint KCoor = new GPoint(Kx, Ky);
+		
+		boolean legalMove = checkIfLegalMoveR(RCoor);
 		if(legalMove)
-        {   	
-        	Rx = testRx;
-        	Ry = testRy;
-        	fillEmptyChessboard();
-        	addKRKtoChessboard();
-        }
-		return legalMove;
+		{
+			boardPos = new BoardPosition(kCoor,KCoor,RCoor);
+			posMovesR.add(boardPos);
+		}
+		return posMovesR;
 	}
 	
 	private boolean checkIfLegalMoveR(GPoint RCoor)
@@ -296,55 +372,77 @@ public class Chessboard extends ConsoleProgram
 		return true;
 	}
 
-	// to move white King
-	public boolean moveK()
+	public boolean randomMoveK()
 	{
-		int random = randInt(1,8);
-		int testkx = Kx;
-		int testky = Ky;
+		ArrayList<BoardPosition> posMovesK = posMovesK();
+		
+		if(posMovesK.size() == 0)
+		{
+			return false;
+		}
+		int rand = randInt(0,posMovesK.size()-1);
+		BoardPosition boardPos = posMovesK.get(rand);
+		
+		Kx = (int)boardPos.getK().getX();
+		Ky = (int)boardPos.getK().getY();
+		
+		fillEmptyChessboard();
+		addKRKtoChessboard();
+		
+
+		return true;		
+	}
+
+	// to move white King
+	private ArrayList<BoardPosition> posMovesK()
+	{
+		ArrayList<BoardPosition> posMovesK = new ArrayList<BoardPosition>();
+		int testKx = Kx;
+		int testKy = Ky;
 		
 		for(int i=1; i<9;i++)
 		{
 			switch (i) {
-		        case 1:  testkx = kx-1;
-		        		 testky = ky-1;
+		        case 1:  testKx = Kx-1;
+		        		 testKy = Ky-1;
 		                 break;
-		        case 2:  testky = ky-1;
+		        case 2:  testKy = Ky-1;
 		                 break;
-		        case 3:  testkx = kx+1;
-		        		 testky = ky-1;
+		        case 3:  testKx = Kx+1;
+		        		 testKy = Ky-1;
 		                 break;
-		        case 4:  testkx = kx-1;
+		        case 4:  testKx = Kx-1;
 		                 break;
-		        case 5:  testkx = kx+1;
+		        case 5:  testKx = Kx+1;
 		                 break;
-		        case 6:  testkx = kx-1;
-		        		 testky = ky+1;
+		        case 6:  testKx = Kx-1;
+		        		 testKy = Ky+1;
 		                 break;
-		        case 7:  testky = ky+1;
+		        case 7:  testKy = Ky+1;
 		                 break;
-		        case 8:  testkx = kx+1;
-		        		 testky = ky+1;
+		        case 8:  testKx = Kx+1;
+		        		 testKy = Ky+1;
 		                 break;
 		   	}
-		   	GPoint KCoor = new GPoint(testkx, testky);
+		   	GPoint KCoor = new GPoint(testKx, testKy);
         	boolean legalMove = checkIfLegalMoveK(KCoor); 
 	             
 		    if(legalMove)
 		    {   	
-		    	testkx;
-		    	testky;
-		    	//fillEmptyChessboard();
-		    	//addKRKtoChessboard();
+		    	GPoint kCoor = new GPoint(kx, ky);
+		    	GPoint RCoor = new GPoint(Rx, Ry);
+		    	
+		    	BoardPosition pos = new BoardPosition(kCoor, KCoor, RCoor);
+		    	posMovesK.add(pos);
 		    }
         }
 
-        return legalMove;
+        return posMovesK;
 	}
 	
 	private boolean checkIfLegalMoveK(GPoint KCoor)
 	{
-		boolean check = notInCheckK(KCoor);
+		boolean check = KingNotInCheck(KCoor);
 		boolean on = onChessBoard(KCoor);
 		boolean noOtherPiece = noOtherPiece(KCoor);
 		if(check && on && noOtherPiece)
@@ -354,7 +452,7 @@ public class Chessboard extends ConsoleProgram
 		return false;
 	}
 	
-	private boolean notInCheckK(GPoint KCoor)
+	private boolean KingNotInCheck(GPoint KCoor)
 	{
 		boolean K = notCheckk(KCoor);
 		if(K)
@@ -380,66 +478,30 @@ public class Chessboard extends ConsoleProgram
 			return true;
 		}
 		return false;
-	}
-
-	
-	private boolean sameArray(int[] A, int[] B)
-	{
-		boolean result = true;
-		for(int i=0; i<A.length;i++)
-		{
-			if(A[i] != B[i])
-			{
-				return false;
-			}
-		}
-		
-		return result;
-	}
-	
-	public int getkx()
-	{
-		return kx;
-	}
-	public int getky()
-	{
-		return ky;
-	}
-	public int getKx()
-	{
-		return Kx;
-	}
-	public int getKy()
-	{
-		return Ky;
-	}
-	public int getRx()
-	{
-		return Rx;
-	}
-	public int getRy()
-	{
-		return Ry;
-	}
-	
-	public static int randInt(int min, int max) {
-
-    // NOTE: Usually this should be a field rather than a method
-    // variable so that it is not re-seeded every call.
-    Random rand = new Random();
-
-    // nextInt is normally exclusive of the top value,
-    // so add 1 to make it inclusive
-    int randomNum = rand.nextInt((max - min) + 1) + min;
-
-    return randomNum;
 	}	
+	
+	
+	
+/////////////////////////////////////////////////////////////////////////
+// To find the move with the highest reward
+/////////////////////////////////////////////////////////////////////////	
 	
 	public ArrayList<BoardPosition> findAllPosNextStates()
 	{
 		ArrayList<BoardPosition> posPositions = new ArrayList<BoardPosition>();
 		
+		ArrayList<BoardPosition> posKPositions = posMovesK();
+		ArrayList<BoardPosition> posRPositions = posMovesR();
 		
+		for(int i=0;i<posKPositions.size();i++)
+		{
+			posPositions.add(posKPositions.get(i));
+		}
+		
+		for(int i=0;i<posRPositions.size();i++)
+		{
+			posPositions.add(posRPositions.get(i));
+		}
 		return posPositions;
 	}
 	
@@ -449,9 +511,9 @@ public class Chessboard extends ConsoleProgram
 /////////////////////////////////////////////////////////////////////////
 	
 	// FEATURE: num of pos squares k
-	public int noOfPosSquaresk()
+	public double noOfPosSquaresk()
 	{
-		int numOfPosSquares = 0;	
+		double numOfPosSquares = 0;	
 		
 		GPoint kCoor;
 		boolean legalMove;
@@ -505,6 +567,74 @@ public class Chessboard extends ConsoleProgram
 		}
                  
         return numOfPosSquares;
+	}
+	
+
+	
+/////////////////////////////////////////////////////////////////////////
+// Extra methods
+/////////////////////////////////////////////////////////////////////////
+
+	private boolean sameArray(int[] A, int[] B)
+	{
+		boolean result = true;
+		for(int i=0; i<A.length;i++)
+		{
+			if(A[i] != B[i])
+			{
+				return false;
+			}
+		}
+		
+		return result;
+	}
+	
+	public int getkx()
+	{
+		return kx;
+	}
+	public int getky()
+	{
+		return ky;
+	}
+	public int getKx()
+	{
+		return Kx;
+	}
+	public int getKy()
+	{
+		return Ky;
+	}
+	public int getRx()
+	{
+		return Rx;
+	}
+	public int getRy()
+	{
+		return Ry;
+	}
+	
+	public char[][] getCBarray()
+	{
+		return CBarray;
+	}
+	
+	public int getCBSize()
+	{
+		return size;
+	}
+	
+	public static int randInt(int min, int max) {
+
+    // NOTE: Usually this should be a field rather than a method
+    // variable so that it is not re-seeded every call.
+    Random rand = new Random();
+
+    // nextInt is normally exclusive of the top value,
+    // so add 1 to make it inclusive
+    int randomNum = rand.nextInt((max - min) + 1) + min;
+
+    return randomNum;
 	}
 }
 
