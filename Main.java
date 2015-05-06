@@ -48,7 +48,7 @@ public class Main extends ConsoleProgram
 	private boolean printing = false;
 	
 	/* number of games to be played by the agents */
-	private double numberOfGames = 5;
+	private double numberOfGames = 10;
 	
 	/* Mean number of moves per game */
 	private int numOfMoves;
@@ -62,6 +62,12 @@ public class Main extends ConsoleProgram
 	/* Starting parametervector and feature values */
 	ArrayList<Double> parVector = new ArrayList<Double>(); 
 	ArrayList<Double> featureValues = new ArrayList<Double>(); 
+	
+	/* arraylist for all boardpositions in a game */
+	ArrayList<BoardPosition> pastStates = new ArrayList<BoardPosition>();
+	
+	/* learning parameters */
+	private double lambda = 0.7;
 
 /////////////////////////////////////////////////////////////////////////
 // Main function
@@ -83,7 +89,6 @@ public class Main extends ConsoleProgram
 		
 			// FEATURE: write to file pos squares k
 			//writeFilePosSquaresk();
-			
 			learnOnData();
 			
 			resetBoard();
@@ -104,7 +109,12 @@ public class Main extends ConsoleProgram
 		{
 			printChessboard();
 		}
+		
+		// clear all past positions
+		pastStates.clear();
+		
 		playMoves();
+
 		mean += numOfMoves;
 		checkWhatEnding();
 	}
@@ -156,7 +166,9 @@ public class Main extends ConsoleProgram
 			{
 				break;
 			}
-	
+			
+			pastStates.add(chessBoard.getBoardPosition());
+
 			//randomWhiteMove();
 			whiteMove();
 			
@@ -272,47 +284,80 @@ public class Main extends ConsoleProgram
 	
 	private void learnOnData()
 	{
+		println("finished");
 			// updating the parameters	
-		// For this we need:
 		double learningRate = 0.7;
-//		double tempDif = calcTempDif();
-//		double correctiondt = calcCorrectiondt();
-//		double gradJ = calcGradJ();	
-		double lambda = 0.7;
+
+		double sumGradJ = sumGradJ();
 		
-		//updateParameters(learningRate, tempDif, correctiondt, gradJ, lambda);
+		updateParameters(learningRate, sumGradJ);
 	}
-	
-	private double calcTempDif()
+
+	private double sumGradJ()
 	{
-		double tempDif = 0;
+		double sumGradients = 0;
 	
+		for(int i=0; i<pastStates.size();i++)
+		{
+			sumGradients += calcGradJ(pastStates.get(i), i);
+		}
 		
-		
-		return tempDif;
+		return sumGradients;
 	}
-//	
-//	private double calcCorrectiondt()
-//	{
-//		double correctiondt;
-//		
-//		return correctiondt;
-//	}
-//	
-	private double calcGradJ()
+	
+	private double calcGradJ(BoardPosition pos, int t)
 	{
 		double gradJ = 0;
 		
-		for(int i=0; i<parVector.size();i++)
-		{
-			gradJ += parVector.get(i);
-		}
+		Chessboard thisBoard = new Chessboard(pos);
+
+		double correctiondt = calcCorrectiondt(pos, t);
+		
+		// Feature no.1
+		gradJ += thisBoard.noOfPosSquaresk() * correctiondt;
 		
 		return gradJ;
 	}
 	
-	private void updateParameters()
+	private double calcCorrectiondt(BoardPosition pos, int t)
 	{
+		double correctiondt = 0;
+		
+		for(int j=t;j<pastStates.size();j++)
+		{
+			correctiondt += Math.pow(lambda, j-t) * tempDif(pos); 
+		}
+		
+		return correctiondt;
+	}
+	
+	
+	// TODO: can be optemize, double code, double code everywhere...
+	private double tempDif(BoardPosition pos)
+	{
+		double tempDif = 0;
+		
+		ArrayList<BoardPosition> allPosNextMoves;
+		
+		Chessboard tempChessBoard = new Chessboard(pos);
+		
+		allPosNextMoves = tempChessBoard.findAllPosNextStates();
+		
+		BoardPosition bestMove = findHighestReward(allPosNextMoves);
+
+		tempDif = calcReward(bestMove) - calcReward(pos);	
+			
+		println(tempDif);
+			
+		return tempDif;
+	}
+	
+	// TODO: make this vector multiplication
+	private void updateParameters(double learningRate, double sumGradJ)
+	{
+		double feature = parVector.get(0);
+		feature += learningRate*sumGradJ;
+		parVector.set(0, feature);
 	}
 	
 /////////////////////////////////////////////////////////////////////////
@@ -355,7 +400,8 @@ public class Main extends ConsoleProgram
 		print("checkmates:");println(checkMates);
 		print("stalemates:");println(staleMates);
 		print("remis:");println(remis);
-		print("Mean number of moves:");println(mean/numberOfGames);
+		print("Mean number of moves per game:");println(mean/numberOfGames);
+		print("Final weight value:");println(parVector.get(0));
 	}
 	
 	private void writeFilePosSquaresk()

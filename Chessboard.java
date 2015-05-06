@@ -32,7 +32,7 @@ public class Chessboard extends ConsoleProgram
 	boolean staleMate = false;
 	
 	/* Size of Chessboard*/
-	private int size = 4;
+	private int size = 3;
 		
 	/* k starting position */
 	private int kx;
@@ -587,6 +587,15 @@ public class Chessboard extends ConsoleProgram
 		}
 		
 		return result;
+	}
+	
+	public BoardPosition getBoardPosition()
+	{
+		GPoint k = new GPoint(kx, ky);
+		GPoint K = new GPoint(Kx, Ky);
+		GPoint R = new GPoint(Rx, Ry);
+		BoardPosition currentPos = new BoardPosition(k, K, R);
+		return currentPos;
 	}
 	
 	public int getkx()
