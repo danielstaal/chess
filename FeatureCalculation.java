@@ -24,12 +24,25 @@ public class FeatureCalculation
 /////////////////////////////////////////////////////////////////////////
 	
 	private Chessboard CB;
-	private Moves moves;
 	
-	public FeatureCalculation(Chessboard board, Moves Moves)
+	public FeatureCalculation(Chessboard board)
 	{
 		CB = board;
-		moves = Moves;
+	}
+	
+	public double terminalState()
+	{
+		double reward = 0;
+		if(CB.getCheckMate() || CB.getStaleMate())
+		{
+			reward = 5000;
+		}
+		if(!CB.rook.getRookAlive())
+		{
+			reward = -5000;
+		}
+	
+		return reward;
 	}
 	
 	// FEATURE: num of pos squares k
@@ -41,49 +54,49 @@ public class FeatureCalculation
 		boolean legalMove;
 		
 		blackKingCoor = new GPoint(CB.blackKing.getx()-1, CB.blackKing.gety()-1);
-		if(moves.checkIfLegalMovek(blackKingCoor))
+		if(CB.blackKing.checkIfLegalMovek(blackKingCoor))
 		{
 			numOfPosSquares++;
 		}
 		
 		blackKingCoor = new GPoint(CB.blackKing.getx(), CB.blackKing.gety()-1);
-		if(moves.checkIfLegalMovek(blackKingCoor))
+		if(CB.blackKing.checkIfLegalMovek(blackKingCoor))
 		{
 			numOfPosSquares++;
 		}
 		
 		blackKingCoor = new GPoint(CB.blackKing.getx()-1, CB.blackKing.gety());
-		if(moves.checkIfLegalMovek(blackKingCoor))
+		if(CB.blackKing.checkIfLegalMovek(blackKingCoor))
 		{
 			numOfPosSquares++;
 		}
 		
 		blackKingCoor = new GPoint(CB.blackKing.getx()+1, CB.blackKing.gety()+1);
-		if(moves.checkIfLegalMovek(blackKingCoor))
+		if(CB.blackKing.checkIfLegalMovek(blackKingCoor))
 		{
 			numOfPosSquares++;
 		}
 		
 		blackKingCoor = new GPoint(CB.blackKing.getx()+1, CB.blackKing.gety()-1);
-		if(moves.checkIfLegalMovek(blackKingCoor))
+		if(CB.blackKing.checkIfLegalMovek(blackKingCoor))
 		{
 			numOfPosSquares++;
 		}
 		
 		blackKingCoor = new GPoint(CB.blackKing.getx()-1, CB.blackKing.gety()+1);
-		if(moves.checkIfLegalMovek(blackKingCoor))
+		if(CB.blackKing.checkIfLegalMovek(blackKingCoor))
 		{
 			numOfPosSquares++;
 		}
 		
 		blackKingCoor = new GPoint(CB.blackKing.getx(), CB.blackKing.gety()+1);
-		if(moves.checkIfLegalMovek(blackKingCoor))
+		if(CB.blackKing.checkIfLegalMovek(blackKingCoor))
 		{
 			numOfPosSquares++;
 		}
 		
 		blackKingCoor = new GPoint(CB.blackKing.getx()+1, CB.blackKing.gety());
-		if(moves.checkIfLegalMovek(blackKingCoor))
+		if(CB.blackKing.checkIfLegalMovek(blackKingCoor))
 		{
 			numOfPosSquares++;
 		}

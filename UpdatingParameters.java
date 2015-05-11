@@ -40,9 +40,11 @@ public class UpdatingParameters extends ConsoleProgram
 	public void initiateParVector()
 	{
 //			FEATURE Weights:
-//				no.1: legal squares for black king		
-		parVector.add(0.5);
-//				no.2: 	
+//				no.1: terminal state
+		//parVector.add(0.5);
+//				no.2: legal squares for black king		
+		parVector.add(0.5);	
+				
 	}
 	
 	public void learnOnData()
@@ -50,19 +52,22 @@ public class UpdatingParameters extends ConsoleProgram
 		System.out.println("finished");
 			// updating the parameters	
 
-		double sumGradJ = sumGradJ();
+		double[] sumGradJ = sumGradJ();
 				System.out.print("C");
-		updateParameters(learningRate, sumGradJ);
+		updateParameters(sumGradJ);
 	}
 
-	private double sumGradJ()
+	private double[] sumGradJ()
 	{
-		double sumGradients = 0;
+		double[] sumGradients = new double[parVector.size()];
 	
-		for(int i=0; i<pastStates.size();i++)
+		for(int j=0; j<parVector.size();j++)
 		{
-			sumGradients += calcGradJ(pastStates.get(i), i);
-									System.out.print("D");
+			for(int i=0; i<pastStates.size();i++)
+			{
+				sumGradients[j] += calcGradJ(pastStates.get(i), i);
+										System.out.print("D");
+			}
 		}
 		return sumGradients;
 	}
@@ -72,8 +77,7 @@ public class UpdatingParameters extends ConsoleProgram
 		double gradJ = 0;
 		
 		Chessboard thisBoard = new Chessboard(pos);
-		Moves thisMoves = new Moves(thisBoard);
-		FeatureCalculation thisFC = new FeatureCalculation(thisBoard, thisMoves);
+		FeatureCalculation thisFC = new FeatureCalculation(thisBoard);
 
 		double correctiondt = calcCorrectiondt(pos, t);
 		
@@ -96,15 +100,14 @@ public class UpdatingParameters extends ConsoleProgram
 	}
 	
 	
-	// TODO: can be optemize, double code, double code everywhere...
+	// TODO: can be optemized, double code, double code everywhere...
 	private double tempDif(BoardPosition pos)
 	{
 		double tempDif = 0;
 		
 		ArrayList<BoardPosition> allPosNextMoves;
 		Chessboard tempChessBoard = new Chessboard(pos);
-		Moves tempMoves = new Moves(tempChessBoard);
-		AllNextStates tempAllNext = new AllNextStates(tempChessBoard, tempMoves);
+		AllNextStates tempAllNext = new AllNextStates(tempChessBoard);
 		
 		allPosNextMoves = tempAllNext.findAllPosNextStates();
 		
@@ -112,16 +115,22 @@ public class UpdatingParameters extends ConsoleProgram
 
 		tempDif = rewardFunction.calcReward(bestMove) - rewardFunction.calcReward(pos);	
 			
+		//System.out.println(rewardFunction.calcReward(bestMove));
+		//System.out.println(rewardFunction.calcReward(pos));
 		return tempDif;
 	}
 	
 	// TODO: make this vector multiplication
-	private void updateParameters(double learningRate, double sumGradJ)
+	private void updateParameters(double[] sumGradJ)
 	{
-		double feature = parVector.get(0);
-		feature += learningRate*sumGradJ;
-		parVector.set(0, feature);
-		System.out.print("B");
+		double feature;
+		for(int i=0; i<parVector.size();i++)
+		{
+			feature = parVector.get(i);
+			feature += learningRate*sumGradJ[i];
+			parVector.set(i, feature);
+			System.out.println(parVector.get(i));
+		}
 	}
 }
 

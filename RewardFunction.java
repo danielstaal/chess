@@ -74,17 +74,17 @@ public class RewardFunction extends ConsoleProgram
 		double reward = 0.0;
 		
 		Chessboard thisBoard = new Chessboard(pos);
-		
-		Moves thisMoves = new Moves(thisBoard);
-		FeatureCalculation thisFC = new FeatureCalculation(thisBoard, thisMoves);
+
+		FeatureCalculation thisFC = new FeatureCalculation(thisBoard);
 				
 		// make a random move with the black king
-		thisMoves.randomMovek();
+		thisBoard.blackKing.randomMovek();
 		
 		// Feature no.1
-		reward += parVector.get(0) * 800-thisFC.noOfPosSquaresk();
+		reward += thisFC.terminalState();
 		// Feature no.2
-		
+		reward += parVector.get(0) * thisFC.noOfPosSquaresk();
+				
 		return reward;
 	}
 }

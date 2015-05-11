@@ -23,20 +23,18 @@ public class AllNextStates
 /////////////////////////////////////////////////////////////////////////	
 	
 	private Chessboard CB;
-	private Moves moves;
 	
-	public AllNextStates(Chessboard board, Moves Moves)
+	public AllNextStates(Chessboard board)
 	{
 		CB = board;
-		moves = Moves;
 	}
 	
 	public ArrayList<BoardPosition> findAllPosNextStates()
 	{
 		ArrayList<BoardPosition> posPositions = new ArrayList<BoardPosition>();
 		
-		ArrayList<BoardPosition> posKPositions = moves.posMovesK();
-		ArrayList<BoardPosition> posRPositions = moves.posMovesR();
+		ArrayList<BoardPosition> posKPositions = CB.whiteKing.posMovesK();
+		ArrayList<BoardPosition> posRPositions = CB.rook.posMovesR();
 		
 		for(int i=0;i<posKPositions.size();i++)
 		{

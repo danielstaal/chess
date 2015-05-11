@@ -21,14 +21,38 @@ public class Piece extends ConsoleProgram
 	private int x;
 	private int y;
 
-	public Piece(GPoint coor)
+	public Extra extra = new Extra();
+
+	Chessboard CB;
+
+	public Piece(GPoint coor, Chessboard board)
 	{
 		x = (int)coor.getX();
 		y = (int)coor.getY();	
+		
+		CB = board;
 	}
 	
 	public Piece()
 	{
+	}
+	
+	public boolean onChessBoard(GPoint Coor)
+	{
+		if((Coor.getX() < CB.getCBSize() && Coor.getX() >= 0) && (Coor.getY() < CB.getCBSize() && Coor.getY() >= 0))
+		{
+			return true;
+		}
+		return false;
+	}	
+	
+	public boolean noOtherPiece(GPoint Coor)
+	{
+		if((Coor.getX() == CB.blackKing.getx() && Coor.getY() == CB.blackKing.gety()) || (Coor.getX() == CB.whiteKing.getx() && Coor.getY() == CB.whiteKing.gety()) || (Coor.getX() == CB.rook.getx() && Coor.getY() == CB.rook.gety()))
+		{
+			return false;
+		} 
+		return true;
 	}
 	
 	public int getx()

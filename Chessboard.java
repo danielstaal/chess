@@ -28,22 +28,12 @@ public class Chessboard extends ConsoleProgram
 	private boolean staleMate = false;
 	
 	/* Size of Chessboard*/
-	private int size = 5;
+	private int size = 4;
 	
 	/* Pieces */
 	BlackKing blackKing;
 	WhiteKing whiteKing;
 	Rook rook;		
-	
-//	/* k starting position */
-//	private int kx;
-//	private int ky;
-//	/* K starting position */
-//	private int Kx;
-//	private int Ky;
-//	/* R starting position */
-//	private int Rx;
-//	private int Ry;
 	
 	/* to access extra methods */
 	Extra extra = new Extra();
@@ -53,16 +43,10 @@ public class Chessboard extends ConsoleProgram
 	{
 		CBarray = new char[size][size];
 
-		blackKing = new BlackKing(boardPos.getk());
-		whiteKing = new WhiteKing(boardPos.getK());					
-		rook = new Rook(boardPos.getR());
-		
-//		kx = (int)boardPos.getk().getX();
-//		ky = (int)boardPos.getk().getY();
-//		Kx = (int)boardPos.getK().getX();
-//		Ky = (int)boardPos.getK().getY();
-//		Rx = (int)boardPos.getR().getX();
-//		Ry = (int)boardPos.getR().getY();
+		blackKing = new BlackKing(boardPos.getk(), this);
+		whiteKing = new WhiteKing(boardPos.getK(), this);					
+		rook = new Rook(boardPos.getR(), this);
+
 		fillEmptyChessboard();
 		addKRKtoChessboard();
 	}
@@ -118,59 +102,7 @@ public class Chessboard extends ConsoleProgram
 	{
 		return size;
 	}
-	
-//	public int getkx()
-//	{
-//		return kx;
-//	}
-//	public int getky()
-//	{
-//		return ky;
-//	}
-//	public int getKx()
-//	{
-//		return Kx;
-//	}
-//	public int getKy()
-//	{
-//		return Ky;
-//	}
-//	public int getRx()
-//	{
-//		return Rx;
-//	}
-//	public int getRy()
-//	{
-//		return Ry;
-//	}
-//	public void changekx(int newkx)
-//	{
-//		kx = newkx;
-//	}
-//	public void changeky(int newky)
-//	{
-//		ky = newky;
-//	}
-//	public void changeKx(int newKx)
-//	{
-//		Kx = newKx;
-//	}
-//	public void changeKy(int newKy)
-//	{
-//		Ky = newKy;
-//	}
-//	public void changeRx(int newRx)
-//	{
-//		Rx = newRx;
-//	}
-//	public void changeRy(int newRy)
-//	{
-//		Ry = newRy;
-//	}
-//	public boolean getRookAlive()
-//	{
-//		return rookAlive;
-//	} 
+
 	public boolean getStaleMate()
 	{
 		return staleMate;
@@ -179,10 +111,6 @@ public class Chessboard extends ConsoleProgram
 	{
 		return checkMate;
 	} 	
-//	public void setRookAlive(boolean flag)
-//	{
-//		rookAlive = flag;
-//	} 
 	public void setStaleMate(boolean flag)
 	{
 		staleMate = flag;

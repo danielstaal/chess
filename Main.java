@@ -47,7 +47,7 @@ public class Main extends ConsoleProgram
 	private boolean printing = false;
 	
 	/* number of games to be played by the agents */
-	private double numberOfGames = 2;
+	private double numberOfGames = 20;
 	
 	/* Mean number of moves per game */
 	private int numOfMoves;
@@ -66,12 +66,12 @@ public class Main extends ConsoleProgram
 	
 	/* to access extra methods */
 	private Extra extra = new Extra();
-	/* to acces possible moves */
-	private Moves moves = new Moves(chessBoard);
+//	/* to acces possible moves */
+//	private Moves moves = new Moves(chessBoard);
 	/* to access feature calculation */
-	private FeatureCalculation featCalc = new FeatureCalculation(chessBoard, moves);
+	private FeatureCalculation featCalc = new FeatureCalculation(chessBoard);
 	/* to access calc all next moves */
-	private AllNextStates allPosNextStates = new AllNextStates(chessBoard, moves);
+	private AllNextStates allPosNextStates = new AllNextStates(chessBoard);
 	/* to access the reward function */
 	private RewardFunction rewardFunction = new RewardFunction(allPosNextStates, chessBoard, parVector);
 	/* to access UpdatingParameters */
@@ -180,8 +180,8 @@ public class Main extends ConsoleProgram
 			}
 			pastStates.add(chessBoard.getBoardPosition());
 
-			randomWhiteMove();
-			//whiteMove();
+			//randomWhiteMove();
+			whiteMove();
 			if(printing)
 			{
 				print("After white move");
@@ -194,7 +194,7 @@ public class Main extends ConsoleProgram
 	
 	private void blackMove()
 	{
-		moves.randomMovek();
+		chessBoard.blackKing.randomMovek();
 	}
 	
 	// NOTE: is te veranderen in random uit allPosNextStates.findAllPosNextStates
@@ -209,10 +209,10 @@ public class Main extends ConsoleProgram
 		{
 			if(rand == 0)
 			{
-				legalMove = moves.randomMoveR();
+				legalMove = chessBoard.rook.randomMoveR();
 			}else
 			{
-				legalMove = moves.randomMoveK();
+				legalMove = chessBoard.whiteKing.randomMoveK();
 			}
 			rand = extra.randInt(0,1);
 		}
@@ -257,46 +257,50 @@ public class Main extends ConsoleProgram
 		print("stalemates:");println(staleMates);
 		print("remis:");println(remis);
 		print("Mean number of moves per game:");println(mean/numberOfGames);
-		print("Final weight value:");println(parVector.get(0));
-	}
-	
-	private void writeFilePosSquaresk()
-	{
-		// FEATURE: num pos squares
-		String stringPosSquaresk = "";
-		for(int i=0; i<posSquaresk.size();i++)
+		print("Final weight value:");
+		for(int i=0; i<parVector.size();i++)
 		{
-			stringPosSquaresk += posSquaresk.get(i);
+			println(parVector.get(i));
 		}
-		fileWriting(stringPosSquaresk);
 	}
 	
-	private void fileWriting(String content)
-	{
-		String fileName = "testData" + numberOfDataFile + ".txt";
-		// to increment the name of the datafile
-		numberOfDataFile++;
-		
-		try {
- 
-			File file = new File("/home/jharvard/java/chess/data/" + fileName);
- 
-			// if file doesnt exists, then create it
-			if (!file.exists()) {
-				file.createNewFile();
-			}
- 
-			FileWriter fw = new FileWriter(file.getAbsoluteFile());
-			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(content);
-			bw.close();
- 
-			System.out.println("Done");
- 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	private void writeFilePosSquaresk()
+//	{
+//		// FEATURE: num pos squares
+//		String stringPosSquaresk = "";
+//		for(int i=0; i<posSquaresk.size();i++)
+//		{
+//			stringPosSquaresk += posSquaresk.get(i);
+//		}
+//		fileWriting(stringPosSquaresk);
+//	}
+	
+//	private void fileWriting(String content)
+//	{
+//		String fileName = "testData" + numberOfDataFile + ".txt";
+//		// to increment the name of the datafile
+//		numberOfDataFile++;
+//		
+//		try {
+// 
+//			File file = new File("/home/jharvard/java/chess/data/" + fileName);
+// 
+//			// if file doesnt exists, then create it
+//			if (!file.exists()) {
+//				file.createNewFile();
+//			}
+// 
+//			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+//			BufferedWriter bw = new BufferedWriter(fw);
+//			bw.write(content);
+//			bw.close();
+// 
+//			System.out.println("Done");
+// 
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 }
 
 
