@@ -47,7 +47,7 @@ public class Main extends ConsoleProgram
 	private boolean printing = false;
 	
 	/* number of games to be played by the agents */
-	private double numberOfGames = 20;
+	private double numberOfGames = 2;
 	
 	/* Mean number of moves per game */
 	private int numOfMoves;
@@ -60,25 +60,10 @@ public class Main extends ConsoleProgram
 	
 	/* Starting parametervector and feature values */
 	static ArrayList<Double> parVector = new ArrayList<Double>(); 
-	static ArrayList<Double> featureValues = new ArrayList<Double>(); 
-	/* arraylist for all boardpositions in a game */
-	static ArrayList<BoardPosition> pastStates = new ArrayList<BoardPosition>();
 	
-	/* to access extra methods */
-	private Extra extra = new Extra();
-//	/* to acces possible moves */
-//	private Moves moves = new Moves(chessBoard);
-	/* to access feature calculation */
-	private FeatureCalculation featCalc = new FeatureCalculation(chessBoard);
-	/* to access calc all next moves */
-	private AllNextStates allPosNextStates = new AllNextStates(chessBoard);
-	/* to access the reward function */
-	private RewardFunction rewardFunction = new RewardFunction(allPosNextStates, chessBoard, parVector);
-	/* to access UpdatingParameters */
-	private UpdatingParameters update = new UpdatingParameters(parVector, pastStates, rewardFunction);
+	/* initiate agent */
+	Agent agent = new Agent(chessBoard, parVector);
 	
-
-
 /////////////////////////////////////////////////////////////////////////
 // Main function
 //	- playing the game
@@ -90,7 +75,7 @@ public class Main extends ConsoleProgram
 		// to time the learning process
 		long startTime = System.nanoTime();
 		
-		update.initiateParVector();
+		agent.update.initiateParVector();
 
 		// play games and learn on data
 		for(int i=0; i<numberOfGames; i++)
@@ -98,7 +83,7 @@ public class Main extends ConsoleProgram
 			playAGame();
 			// FEATURE: write to file pos squares k
 			//writeFilePosSquaresk();
-			update.learnOnData();
+			agent.update.learnOnData();
 		
 			resetBoard();
 		}
@@ -120,7 +105,7 @@ public class Main extends ConsoleProgram
 		}
 		
 		// clear all past positions
-		pastStates.clear();
+		agent.pastStates.clear();
 		
 		playMoves();
 
@@ -178,10 +163,10 @@ public class Main extends ConsoleProgram
 			{
 				break;
 			}
-			pastStates.add(chessBoard.getBoardPosition());
+			agent.pastStates.add(chessBoard.getBoardPosition());
 
-			//randomWhiteMove();
-			whiteMove();
+			agent.makeMove();
+
 			if(printing)
 			{
 				print("After white move");
@@ -197,31 +182,7 @@ public class Main extends ConsoleProgram
 		chessBoard.blackKing.randomMovek();
 	}
 	
-	// NOTE: is te veranderen in random uit allPosNextStates.findAllPosNextStates
-	private void randomWhiteMove()
-	{
-		// choose random piece
-		int rand = extra.randInt(0,1);
-		boolean legalMove = false;
-		
-		// maybe not most efficient with while loop
-		while(!legalMove)
-		{
-			if(rand == 0)
-			{
-				legalMove = chessBoard.rook.randomMoveR();
-			}else
-			{
-				legalMove = chessBoard.whiteKing.randomMoveK();
-			}
-			rand = extra.randInt(0,1);
-		}
-	}
-		
-	private void whiteMove()
-	{
-		rewardFunction.findBestMove();
-	}	
+	
 
 /////////////////////////////////////////////////////////////////////////
 //  Printing results and chessboard
