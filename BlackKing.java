@@ -137,7 +137,7 @@ public class BlackKing extends Piece
 	}
 	
 	// k doesnt make a move so R attacks it
-	private boolean notCheckR(GPoint kCoor)
+	public boolean notCheckR(GPoint kCoor)
 	{
 		// to check if rook is supported by white king
 		GPoint RCoor = new GPoint(CB.rook.getx(), CB.rook.gety());

@@ -25,12 +25,14 @@ public class RewardFunction extends ConsoleProgram
 	private AllNextStates allPosNextStates;
 	private Chessboard chessBoard;
 	private ArrayList<Double> parVector;
+	public ArrayList<Double> featureValues;
 	
-	public RewardFunction(AllNextStates aPNS, Chessboard board, ArrayList<Double> pV)
+	public RewardFunction(AllNextStates aPNS, Chessboard board, ArrayList<Double> pV, ArrayList<Double> fV)
 	{
 		allPosNextStates = aPNS;
 		chessBoard = board;
 		parVector = pV;
+		featureValues = fV;
 	}
 	
 	public void findBestMove()
@@ -66,6 +68,8 @@ public class RewardFunction extends ConsoleProgram
 				bestBoardPosition = allPosNextMoves.get(i);
 			}
 		}
+		featureValues.add(reward);
+		
 		return bestBoardPosition;
 	}
 		
@@ -80,11 +84,21 @@ public class RewardFunction extends ConsoleProgram
 		// make a random move with the black king
 		thisBoard.blackKing.randomMovek();
 		
-		// Feature no.1
+		// Feature no.1 terminal state
 		reward += thisFC.terminalState();
+		
 		// Feature no.2
 		reward += parVector.get(0) * thisFC.noOfPosSquaresk();
-				
+		// Feature no.3
+		reward += parVector.get(1) * thisFC.distanceToEdgeBlackKing();	
+		
+		reward += parVector.get(2) * thisFC.rookChecksBlackKing();	
+						
 		return reward;
 	}
+	
+	
+	
+	
+	
 }

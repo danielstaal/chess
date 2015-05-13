@@ -28,12 +28,12 @@ public class Main extends ConsoleProgram
 /////////////////////////////////////////////////////////////////////////
 	
 	/* Standard initial positions */
-	static private GPoint k = new GPoint(3,3);
-	static private GPoint K = new GPoint(0,2);
-	static private GPoint R = new GPoint(0,0);
+	static private GPoint blackKing = new GPoint(3,3);
+	static private GPoint whiteKing = new GPoint(0,2);
+	static private GPoint rook = new GPoint(0,0);
 	
 	/* initial BoardPosition */
-	private BoardPosition initPos = new BoardPosition(k, K, R);
+	private BoardPosition initPos = new BoardPosition(blackKing, whiteKing, rook);
 	/* Chessboard */
 	private Chessboard chessBoard = new Chessboard(initPos);
 
@@ -47,11 +47,17 @@ public class Main extends ConsoleProgram
 	private boolean printing = false;
 	
 	/* number of games to be played by the agents */
-	private double numberOfGames = 2;
+	private double numberOfGames = 1000;
 	
 	/* Mean number of moves per game */
 	private int numOfMoves;
 	private double mean = 0.0; 
+	
+	/* max number of moves */
+	private int maxNumberOfMoves = 20;
+	
+	/* did the game reach a terminal state */
+	private boolean result = true;
 	
 	/* checkmates,stalemates,remis */
 	private int checkMates = 0;
@@ -80,11 +86,18 @@ public class Main extends ConsoleProgram
 		// play games and learn on data
 		for(int i=0; i<numberOfGames; i++)
 		{
+			if(i == numberOfGames - 1)
+			{
+				printing = true;
+			}
+			
+			result = true;
 			playAGame();
-			// FEATURE: write to file pos squares k
-			//writeFilePosSquaresk();
-			agent.update.learnOnData();
-		
+
+			if(result)
+			{
+				agent.update.learnOnData();
+			}
 			resetBoard();
 		}
 		printResult();
@@ -110,6 +123,7 @@ public class Main extends ConsoleProgram
 		playMoves();
 
 		mean += numOfMoves;
+		
 		checkWhatEnding();
 	}
 	
@@ -127,6 +141,7 @@ public class Main extends ConsoleProgram
 		{
 			staleMate();
 		}
+		else{result = false;}
 	}
 		
 	private void checkMate()
@@ -148,7 +163,7 @@ public class Main extends ConsoleProgram
 	{
 		numOfMoves = 0;
 		
-		while(numOfMoves < 30)
+		while(numOfMoves < maxNumberOfMoves)
 		{
 			blackMove();
 			
@@ -163,6 +178,8 @@ public class Main extends ConsoleProgram
 			{
 				break;
 			}
+			
+			// after black move add current state to states
 			agent.pastStates.add(chessBoard.getBoardPosition());
 
 			agent.makeMove();
@@ -213,7 +230,7 @@ public class Main extends ConsoleProgram
 	
 	private void printResult()
 	{
-		println("all games played");
+		print((int)numberOfGames);println(" games played");
 		print("checkmates:");println(checkMates);
 		print("stalemates:");println(staleMates);
 		print("remis:");println(remis);

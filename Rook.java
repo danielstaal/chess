@@ -34,9 +34,9 @@ public class Rook extends Piece
 		return rookAlive;
 	} 
 	
-	/// rook moves
-	/////////////////////////////////////////////////////////////////////
-//  Moving the white pieces
+
+/////////////////////////////////////////////////////////////////////
+//  Moving the rook
 /////////////////////////////////////////////////////////////////////
 	public boolean randomMoveR()
 	{
@@ -133,7 +133,7 @@ public class Rook extends Piece
 		BoardPosition boardPos;
 			
 		GPoint kCoor = new GPoint(CB.blackKing.getx(), CB.blackKing.gety());
-		GPoint KCoor = new GPoint(CB.blackKing.getx(), CB.blackKing.gety());
+		GPoint KCoor = new GPoint(CB.whiteKing.getx(), CB.whiteKing.gety());
 		
 		boolean legalMove = checkIfLegalMoveR(RCoor);
 		if(legalMove)

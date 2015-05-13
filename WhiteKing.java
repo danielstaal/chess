@@ -48,8 +48,6 @@ public class WhiteKing extends Piece
 	public ArrayList<BoardPosition> posMovesK()
 	{
 		ArrayList<BoardPosition> posMovesK = new ArrayList<BoardPosition>();
-		int testKx = CB.whiteKing.getx();
-		int testKy = CB.whiteKing.getx();
 		
 		GPoint KCoor = null;
 		

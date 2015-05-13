@@ -44,6 +44,10 @@ public class UpdatingParameters extends ConsoleProgram
 		//parVector.add(0.5);
 //				no.2: legal squares for black king		
 		parVector.add(0.5);	
+//				no.3: dist black king to edge		
+		parVector.add(0.5);	
+//				no.4 rook checks black king
+		parVector.add(0.5);
 				
 	}
 	
@@ -53,8 +57,10 @@ public class UpdatingParameters extends ConsoleProgram
 			// updating the parameters	
 
 		double[] sumGradJ = sumGradJ();
-				System.out.print("C");
+
 		updateParameters(sumGradJ);
+		
+		normaliseWeights();
 	}
 
 	private double[] sumGradJ()
@@ -63,16 +69,16 @@ public class UpdatingParameters extends ConsoleProgram
 	
 		for(int j=0; j<parVector.size();j++)
 		{
-			for(int i=0; i<pastStates.size();i++)
+			for(int i=0; i<pastStates.size()-1;i++)
 			{
-				sumGradients[j] += calcGradJ(pastStates.get(i), i);
-										System.out.print("D");
+				sumGradients[j] += calcGradJ(pastStates.get(i), i, j);
 			}
+			System.out.print("D");
 		}
 		return sumGradients;
 	}
 	
-	private double calcGradJ(BoardPosition pos, int t)
+	private double calcGradJ(BoardPosition pos, int t, int feature)
 	{
 		double gradJ = 0;
 		
@@ -82,8 +88,10 @@ public class UpdatingParameters extends ConsoleProgram
 		double correctiondt = calcCorrectiondt(pos, t);
 		
 		// Feature no.1
-		gradJ += thisFC.noOfPosSquaresk() * correctiondt;
-		
+		if(feature == 0){gradJ += thisFC.noOfPosSquaresk() * correctiondt;}
+		if(feature == 1){gradJ += thisFC.distanceToEdgeBlackKing() * correctiondt;}
+		if(feature == 2){gradJ += thisFC.rookChecksBlackKing() * correctiondt;}
+		 
 		return gradJ;
 	}
 	
@@ -91,9 +99,9 @@ public class UpdatingParameters extends ConsoleProgram
 	{
 		double correctiondt = 0;
 		
-		for(int j=t;j<pastStates.size();j++)
+		for(int j=t;j<pastStates.size()-1;j++)
 		{
-			correctiondt += Math.pow(lambda, j-t) * tempDif(pos); 
+			correctiondt += Math.pow(lambda, j-t) * tempDif(j); 
 		}
 		
 		return correctiondt;
@@ -101,23 +109,9 @@ public class UpdatingParameters extends ConsoleProgram
 	
 	
 	// TODO: can be optemized, double code, double code everywhere...
-	private double tempDif(BoardPosition pos)
+	private double tempDif(int j)
 	{
-		double tempDif = 0;
-		
-		ArrayList<BoardPosition> allPosNextMoves;
-		Chessboard tempChessBoard = new Chessboard(pos);
-		AllNextStates tempAllNext = new AllNextStates(tempChessBoard);
-		
-		allPosNextMoves = tempAllNext.findAllPosNextStates();
-		
-		BoardPosition bestMove = rewardFunction.findHighestReward(allPosNextMoves);
-
-		tempDif = rewardFunction.calcReward(bestMove) - rewardFunction.calcReward(pos);	
-			
-		//System.out.println(rewardFunction.calcReward(bestMove));
-		//System.out.println(rewardFunction.calcReward(pos));
-		return tempDif;
+		return rewardFunction.featureValues.get(j+1) - rewardFunction.featureValues.get(j);
 	}
 	
 	// TODO: make this vector multiplication
@@ -129,7 +123,23 @@ public class UpdatingParameters extends ConsoleProgram
 			feature = parVector.get(i);
 			feature += learningRate*sumGradJ[i];
 			parVector.set(i, feature);
-			System.out.println(parVector.get(i));
+		}
+	}
+	
+	private void normaliseWeights()
+	{		
+		double cumulativeSquares = 0;
+		
+		for(int i=0;i<parVector.size();i++)
+		{
+			cumulativeSquares += Math.pow(parVector.get(i), 2);
+		}
+		
+		double vectorMagnitude = Math.sqrt(cumulativeSquares);
+		
+		for(int i=0;i<parVector.size();i++)
+		{
+			parVector.set(i, parVector.get(i)/vectorMagnitude);
 		}
 	}
 }

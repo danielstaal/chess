@@ -30,19 +30,52 @@ public class FeatureCalculation
 		CB = board;
 	}
 	
+	public double rookChecksBlackKing()
+	{
+		GPoint kCoor = new GPoint(CB.blackKing.getx(), CB.blackKing.gety());
+		if(!CB.blackKing.notCheckR(kCoor))
+		{
+			return 10000000;
+		}
+		
+		return 0;
+	}
+	
 	public double terminalState()
 	{
 		double reward = 0;
 		if(CB.getCheckMate() || CB.getStaleMate())
 		{
-			reward = 5000;
+			reward = 50000000;
 		}
 		if(!CB.rook.getRookAlive())
 		{
-			reward = -5000;
+			reward = -50000000;
 		}
 	
 		return reward;
+	}
+	
+	// FEATURE: distance to edge black king
+	public double distanceToEdgeBlackKing()
+	{
+		double distance = 8;
+		
+		int size = CB.getCBSize();
+		int x = CB.blackKing.getx();
+		int y = CB.blackKing.gety();
+		
+		int left = x;
+		int right = size - x; 
+		int up = y;
+		int down = size - y;
+		
+		if(left < distance){distance = left;}
+		if(right < distance){distance = right;}
+		if(up < distance){distance = up;}
+		if(down < distance){distance = down;}
+		
+		return distance;
 	}
 	
 	// FEATURE: num of pos squares k
