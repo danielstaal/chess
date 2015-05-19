@@ -26,11 +26,41 @@ public class Main extends ConsoleProgram
 //		- set printing on/off
 //		- declare number of games to be played
 /////////////////////////////////////////////////////////////////////////
+
+	/* To distinguish datafiles */
+	private int numberOfDataFile = 1;
+	
+	/* Do you want to print the board? */
+	private boolean printing = false;
+	
+	/* randommoves or not */
+	boolean randomMoves = false;
+	
+	/* number of games to be played by the agents */
+	private double numberOfGames = 300;
+	
+	/* Mean number of moves per game */
+	private int numOfMoves;
+	private double mean = 0.0; 
+	
+	/* max number of moves */
+	private int maxNumberOfMoves = 17;
+	
+	/* did the game reach a terminal state */
+	private boolean result = true;
+	
+	/* number of features */
+	private int numberOfFeatures = 3;
+	
+	/* checkmates,stalemates,remis */
+	private int checkMates = 0;
+	private int staleMates = 0;
+	private int remis = 0;
 	
 	/* Standard initial positions */
-	static private GPoint blackKing = new GPoint(3,3);
-	static private GPoint whiteKing = new GPoint(0,2);
-	static private GPoint rook = new GPoint(0,0);
+	static private GPoint blackKing = new GPoint(0,0);
+	static private GPoint whiteKing = new GPoint(2,2);
+	static private GPoint rook = new GPoint(3,3);
 	
 	/* initial BoardPosition */
 	private BoardPosition initPos = new BoardPosition(blackKing, whiteKing, rook);
@@ -40,35 +70,11 @@ public class Main extends ConsoleProgram
 	/* FEATURE: pos squares for k */
 	private ArrayList<Integer> posSquaresk;
 	
-	/* To distinguish datafiles */
-	private int numberOfDataFile = 1;
-	
-	/* Do you want to print the board? */
-	private boolean printing = false;
-	
-	/* number of games to be played by the agents */
-	private double numberOfGames = 1000;
-	
-	/* Mean number of moves per game */
-	private int numOfMoves;
-	private double mean = 0.0; 
-	
-	/* max number of moves */
-	private int maxNumberOfMoves = 20;
-	
-	/* did the game reach a terminal state */
-	private boolean result = true;
-	
-	/* checkmates,stalemates,remis */
-	private int checkMates = 0;
-	private int staleMates = 0;
-	private int remis = 0;
-	
 	/* Starting parametervector and feature values */
 	static ArrayList<Double> parVector = new ArrayList<Double>(); 
 	
 	/* initiate agent */
-	Agent agent = new Agent(chessBoard, parVector);
+	Agent agent = new Agent(chessBoard, parVector, randomMoves);
 	
 /////////////////////////////////////////////////////////////////////////
 // Main function
@@ -81,7 +87,7 @@ public class Main extends ConsoleProgram
 		// to time the learning process
 		long startTime = System.nanoTime();
 		
-		agent.update.initiateParVector();
+		agent.update.initiateParVector(numberOfFeatures);
 
 		// play games and learn on data
 		for(int i=0; i<numberOfGames; i++)
@@ -91,10 +97,23 @@ public class Main extends ConsoleProgram
 				printing = true;
 			}
 			
+			// see progress per 100 games
+			if(i % 100 == 0)
+			{
+				print("after ");print(i);println(" games:");
+				print("checkmates:");println(checkMates);
+				print("stalemates:");println(staleMates);
+				print("remis:");println(remis);
+			}
+			
+			// set a result for a game to true
 			result = true;
+			
+			// play a single game
 			playAGame();
 
-			if(result)
+			// if a terminal state is achieved, update parameters
+			if(result && !randomMoves)
 			{
 				agent.update.learnOnData();
 			}
@@ -119,6 +138,7 @@ public class Main extends ConsoleProgram
 		
 		// clear all past positions
 		agent.pastStates.clear();
+		agent.rewardFunction.stateValues.clear();
 		
 		playMoves();
 
@@ -147,16 +167,19 @@ public class Main extends ConsoleProgram
 	private void checkMate()
 	{
 		checkMates++;
+		agent.rewardFunction.stateValues.add(2000.0);
 	}
 	
 	private void remis()
 	{
 		remis++;
+		agent.rewardFunction.stateValues.add(-2000.0);
 	}
 	
 	private void staleMate()
 	{
 		staleMates++;
+		agent.rewardFunction.stateValues.add(2000.0);
 	}
 		
 	private void playMoves()

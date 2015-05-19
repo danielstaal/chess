@@ -119,6 +119,7 @@ public class BlackKing extends Piece
 	{
 		boolean K = notCheckK(kCoor);
 		boolean R = notCheckR(kCoor);
+		
 		if(K && R)
 		{
 			return true;
@@ -127,7 +128,7 @@ public class BlackKing extends Piece
 	}
 	
 	// k doesnt make a move so K attacks it
-	private boolean notCheckK(GPoint kCoor)
+	public boolean notCheckK(GPoint kCoor)
 	{
 		if((kCoor.getX() >= CB.whiteKing.getx()-1 && kCoor.getX() <= CB.whiteKing.getx() + 1) && (kCoor.getY() >= CB.whiteKing.gety()-1 && kCoor.getY() <= CB.whiteKing.gety() + 1))
 		{
@@ -137,6 +138,8 @@ public class BlackKing extends Piece
 	}
 	
 	// k doesnt make a move so R attacks it
+	
+	//TODO: check if this works
 	public boolean notCheckR(GPoint kCoor)
 	{
 		// to check if rook is supported by white king
@@ -144,12 +147,12 @@ public class BlackKing extends Piece
 		
 		if(kCoor.getX() == CB.rook.getx() || kCoor.getY() == CB.rook.gety())
 		{
-			// check if rook is supported by K
+			// king takes rook if not protected
 			if(kCoor.getX() == CB.rook.getx() && kCoor.getY() == CB.rook.gety() && notCheckK(RCoor))
 			{
 				return true;
 			}
-			else if(CB.whiteKing.gety() == CB.rook.gety())
+			else if(CB.whiteKing.gety() == CB.rook.gety() && CB.rook.gety() == kCoor.getY())
 			{
 				// if king in between on x row
 				if((CB.whiteKing.getx() < CB.rook.getx() && CB.whiteKing.getx() > kCoor.getX()) || (CB.whiteKing.getx() > CB.rook.getx() && CB.whiteKing.getx() < kCoor.getX()))
@@ -157,7 +160,7 @@ public class BlackKing extends Piece
 					return true;
 				}
 			}
-			else if(CB.whiteKing.getx() == CB.rook.getx())
+			else if(CB.whiteKing.getx() == CB.rook.getx() && CB.rook.getx() == kCoor.getX())
 			{
 				// if king in between on x row
 				if((CB.whiteKing.gety() < CB.rook.gety() && CB.whiteKing.gety() > kCoor.getY()) || (CB.whiteKing.gety() > CB.rook.gety() && CB.whiteKing.gety() < kCoor.getY()))

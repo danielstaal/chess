@@ -33,15 +33,17 @@ public class Agent
 	/* to access calc all next moves */
 	private AllNextStates allPosNextStates;
 	/* to access the reward function */
-	private RewardFunction rewardFunction;
+	public RewardFunction rewardFunction;
 	/* to access UpdatingParameters */
 	public UpdatingParameters update;
 	
 	/* the CB */
 	private Chessboard chessBoard;
 	
+	private boolean randomMoves;
 	
-	public Agent(Chessboard board, ArrayList<Double> parVec)
+	
+	public Agent(Chessboard board, ArrayList<Double> parVec, boolean random)
 	{
 		chessBoard = board;
 		parVector = parVec;
@@ -50,12 +52,14 @@ public class Agent
 		rewardFunction = new RewardFunction(allPosNextStates, chessBoard, parVector, featureValues);
 		featCalc = new FeatureCalculation(chessBoard);
 		update = new UpdatingParameters(parVector, pastStates, rewardFunction);
+		
+		randomMoves = random;
 	}
 
 	public void makeMove()
 	{
-		randomWhiteMove();
-		//whiteMove();
+		if(randomMoves){randomWhiteMove();}
+		else{whiteMove();}
 	}
 
 	// NOTE: is te veranderen in random uit allPosNextStates.findAllPosNextStates

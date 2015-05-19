@@ -37,65 +37,57 @@ public class UpdatingParameters extends ConsoleProgram
 		rewardFunction = rF;
 	}
 	
-	public void initiateParVector()
+	public void initiateParVector(int numOfFeatures)
 	{
-//			FEATURE Weights:
-//				no.1: terminal state
-		//parVector.add(0.5);
-//				no.2: legal squares for black king		
-		parVector.add(0.5);	
-//				no.3: dist black king to edge		
-		parVector.add(0.5);	
-//				no.4 rook checks black king
-		parVector.add(0.5);
-				
+		for(int i=0;i<numOfFeatures;i++)
+		{	
+			parVector.add(0.5);	
+			rewardFunction.featureValues.add(new ArrayList<Double>());
+		}		
 	}
 	
 	public void learnOnData()
 	{
-		System.out.println("finished");
-			// updating the parameters	
-
 		double[] sumGradJ = sumGradJ();
+		
+		System.out.print("learn");
 
 		updateParameters(sumGradJ);
 		
-		normaliseWeights();
+//		for(int i=0;i<rewardFunction.featureValues.get(0).size();i++)
+//		{
+//			System.out.println(rewardFunction.featureValues.get(0).get(i));
+//		}
 	}
 
 	private double[] sumGradJ()
 	{
 		double[] sumGradients = new double[parVector.size()];
 	
+		// update every weight
 		for(int j=0; j<parVector.size();j++)
 		{
+			// For each past state calc the gradient * correctiondt
 			for(int i=0; i<pastStates.size()-1;i++)
 			{
-				sumGradients[j] += calcGradJ(pastStates.get(i), i, j);
+				sumGradients[j] += calcGradJ(i, j);
 			}
-			System.out.print("D");
 		}
 		return sumGradients;
 	}
 	
-	private double calcGradJ(BoardPosition pos, int t, int feature)
+	private double calcGradJ(int t, int feature)
 	{
 		double gradJ = 0;
-		
-		Chessboard thisBoard = new Chessboard(pos);
-		FeatureCalculation thisFC = new FeatureCalculation(thisBoard);
 
-		double correctiondt = calcCorrectiondt(pos, t);
+		double correctiondt = calcCorrectiondt(t);
 		
-		// Feature no.1
-		if(feature == 0){gradJ += thisFC.noOfPosSquaresk() * correctiondt;}
-		if(feature == 1){gradJ += thisFC.distanceToEdgeBlackKing() * correctiondt;}
-		if(feature == 2){gradJ += thisFC.rookChecksBlackKing() * correctiondt;}
+		gradJ += rewardFunction.featureValues.get(feature).get(t) * correctiondt;
 		 
 		return gradJ;
 	}
 	
-	private double calcCorrectiondt(BoardPosition pos, int t)
+	private double calcCorrectiondt(int t)
 	{
 		double correctiondt = 0;
 		
@@ -111,18 +103,17 @@ public class UpdatingParameters extends ConsoleProgram
 	// TODO: can be optemized, double code, double code everywhere...
 	private double tempDif(int j)
 	{
-		return rewardFunction.featureValues.get(j+1) - rewardFunction.featureValues.get(j);
+		return rewardFunction.stateValues.get(j+1) - rewardFunction.stateValues.get(j);
 	}
 	
-	// TODO: make this vector multiplication
 	private void updateParameters(double[] sumGradJ)
 	{
-		double feature;
+
 		for(int i=0; i<parVector.size();i++)
 		{
-			feature = parVector.get(i);
-			feature += learningRate*sumGradJ[i];
-			parVector.set(i, feature);
+			double feature = parVector.get(i);
+
+			parVector.set(i, feature + learningRate*sumGradJ[i]);
 		}
 	}
 	

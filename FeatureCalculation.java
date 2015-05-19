@@ -30,31 +30,87 @@ public class FeatureCalculation
 		CB = board;
 	}
 	
+	public double squaresOfKingvsRook()
+	{
+		double squares = 0.0;
+		
+		int rookx = CB.rook.getx();
+		int rooky = CB.rook.gety();
+		int size = CB.getCBSize() - 1;
+		
+		if(CB.rook.getx() > CB.blackKing.getx())
+		{
+			if(CB.rook.gety() > CB.blackKing.gety())
+			{
+				// down right
+				squares = rookx * rooky;
+			}
+			else
+			{
+				// up right
+				squares = (rookx) * (size - rooky);
+			}
+		}
+		else
+		{
+			if(CB.rook.gety() > CB.blackKing.gety())
+			{
+				// down left
+				squares = (size - rookx) * (rooky);
+			}
+			else
+			{
+				// up left
+				squares = (size - rookx) * (size - rooky);
+			}
+		}
+		
+		System.out.print(CB.rook.getx());System.out.println(CB.rook.gety());
+		System.out.print(CB.blackKing.getx());System.out.println(CB.blackKing.gety());
+		System.out.println(squares);
+		
+		return normaliseFeature(squares, size * size);
+	}
+	
+	public double kingProtectsRook()
+	{
+		GPoint RCoor = new GPoint(CB.rook.getx(), CB.rook.gety());
+		if(CB.blackKing.notCheckK(RCoor))
+		{
+			return 0;
+		}
+		return 1;
+	}
+	
 	public double rookChecksBlackKing()
 	{
 		GPoint kCoor = new GPoint(CB.blackKing.getx(), CB.blackKing.gety());
 		if(!CB.blackKing.notCheckR(kCoor))
 		{
-			return 10000000;
+			System.out.print("check");
+			return 1;
 		}
-		
 		return 0;
 	}
 	
-	public double terminalState()
-	{
-		double reward = 0;
-		if(CB.getCheckMate() || CB.getStaleMate())
-		{
-			reward = 50000000;
-		}
-		if(!CB.rook.getRookAlive())
-		{
-			reward = -50000000;
-		}
-	
-		return reward;
-	}
+//	public double terminalState()
+//	{
+//		double reward = 0;
+//		if(CB.getCheckMate())
+//		{
+//			reward = 2000;
+//		}
+//		if(CB.getStaleMate())
+//		{
+//			reward = -2000;
+//		}
+//		if(!CB.rook.getRookAlive())
+//		{
+//			reward = -2000;
+//		}
+//	
+//		return reward;
+//	}
 	
 	// FEATURE: distance to edge black king
 	public double distanceToEdgeBlackKing()
@@ -75,7 +131,9 @@ public class FeatureCalculation
 		if(up < distance){distance = up;}
 		if(down < distance){distance = down;}
 		
-		return distance;
+		//System.out.print(distance);
+		
+		return normaliseFeature(distance, CB.getCBSize()-1);
 	}
 	
 	// FEATURE: num of pos squares k
@@ -134,6 +192,19 @@ public class FeatureCalculation
 			numOfPosSquares++;
 		}
                  
-        return numOfPosSquares;
+        return normaliseFeature(numOfPosSquares, 8);
 	}
+	
+	private double normaliseFeature(double featureValue, double maxValue)
+	{
+		return featureValue/maxValue;
+	}	
+	
 }
+
+
+
+
+
+
+
