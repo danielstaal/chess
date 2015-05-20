@@ -99,13 +99,13 @@ public class RewardFunction extends ConsoleProgram
 		
 		///////////////// Feature rewards:
 		
-		double feature0 = parVector.get(0) * thisFC.squaresOfKingvsRook();
+		double feature0 = parVector.get(0) * thisFC.distanceToEdgeBlackKing();
 		featureValues.get(0).add(feature0);
 		
-		double feature1 = parVector.get(1) * thisFC.distanceToEdgeBlackKing();	
+		double feature1 = parVector.get(1) * thisFC.kingProtectsRook();	
 		featureValues.get(1).add(feature1);
 		
-		double feature2 = parVector.get(2) * thisFC.kingProtectsRook();	
+		double feature2 = parVector.get(2) * thisFC.squaresOfKingvsRook();	
 		featureValues.get(2).add(feature2);	
 		
 //		double feature3 = parVector.get(3) * thisFC.noOfPosSquaresk();	

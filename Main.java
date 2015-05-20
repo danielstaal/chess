@@ -31,20 +31,20 @@ public class Main extends ConsoleProgram
 	private int numberOfDataFile = 1;
 	
 	/* Do you want to print the board? */
-	private boolean printing = false;
+	private boolean printing = true;
 	
 	/* randommoves or not */
 	boolean randomMoves = false;
 	
 	/* number of games to be played by the agents */
-	private double numberOfGames = 300;
+	private double numberOfGames = 1;
 	
 	/* Mean number of moves per game */
 	private int numOfMoves;
 	private double mean = 0.0; 
 	
 	/* max number of moves */
-	private int maxNumberOfMoves = 17;
+	private int maxNumberOfMoves = 5;
 	
 	/* did the game reach a terminal state */
 	private boolean result = true;
@@ -59,8 +59,8 @@ public class Main extends ConsoleProgram
 	
 	/* Standard initial positions */
 	static private GPoint blackKing = new GPoint(0,0);
-	static private GPoint whiteKing = new GPoint(2,2);
-	static private GPoint rook = new GPoint(3,3);
+	static private GPoint whiteKing = new GPoint(0,2);
+	static private GPoint rook = new GPoint(2,2);
 	
 	/* initial BoardPosition */
 	private BoardPosition initPos = new BoardPosition(blackKing, whiteKing, rook);
@@ -113,7 +113,7 @@ public class Main extends ConsoleProgram
 			playAGame();
 
 			// if a terminal state is achieved, update parameters
-			if(result && !randomMoves)
+			if(result && !randomMoves && numOfMoves>1)
 			{
 				agent.update.learnOnData();
 			}
@@ -167,19 +167,19 @@ public class Main extends ConsoleProgram
 	private void checkMate()
 	{
 		checkMates++;
-		agent.rewardFunction.stateValues.add(2000.0);
+		agent.stateValues.add(2000.0);
 	}
 	
 	private void remis()
 	{
 		remis++;
-		agent.rewardFunction.stateValues.add(-2000.0);
+		agent.stateValues.add(-2000.0);
 	}
 	
 	private void staleMate()
 	{
 		staleMates++;
-		agent.rewardFunction.stateValues.add(2000.0);
+		agent.stateValues.add(2000.0);
 	}
 		
 	private void playMoves()
@@ -206,6 +206,8 @@ public class Main extends ConsoleProgram
 			agent.pastStates.add(chessBoard.getBoardPosition());
 
 			agent.makeMove();
+
+			//print("  reward:");println(agent.stateValues.get(numOfMoves));
 
 			if(printing)
 			{
@@ -249,6 +251,7 @@ public class Main extends ConsoleProgram
 	private void resetBoard()
 	{
 		chessBoard.resetPosition(initPos);
+		//chessBoard.resetRandom();
 	}
 	
 	private void printResult()

@@ -132,6 +132,21 @@ public class Chessboard extends ConsoleProgram
 		checkMate = false;
 		rook.setRookAlive(true);
 	}
+	
+	public void resetRandom()
+	{
+		// size min because of array bounds
+		blackKing.setx(extra.randInt(0,size-1));
+		blackKing.sety(extra.randInt(0,size-1));
+		whiteKing.setx(extra.randInt(0,size-1));
+		whiteKing.sety(extra.randInt(0,size-1));
+		rook.setx(extra.randInt(0,size-1));
+		rook.sety(extra.randInt(0,size-1));
+		
+		staleMate = false;
+		checkMate = false;
+		rook.setRookAlive(true);
+	}
 }
 
 

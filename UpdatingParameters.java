@@ -41,7 +41,7 @@ public class UpdatingParameters extends ConsoleProgram
 	{
 		for(int i=0;i<numOfFeatures;i++)
 		{	
-			parVector.add(0.5);	
+			parVector.add(-0.5);	
 			rewardFunction.featureValues.add(new ArrayList<Double>());
 		}		
 	}
@@ -49,8 +49,6 @@ public class UpdatingParameters extends ConsoleProgram
 	public void learnOnData()
 	{
 		double[] sumGradJ = sumGradJ();
-		
-		System.out.print("learn");
 
 		updateParameters(sumGradJ);
 		
@@ -68,7 +66,7 @@ public class UpdatingParameters extends ConsoleProgram
 		for(int j=0; j<parVector.size();j++)
 		{
 			// For each past state calc the gradient * correctiondt
-			for(int i=0; i<pastStates.size()-1;i++)
+			for(int i=0; i<pastStates.size();i++)
 			{
 				sumGradients[j] += calcGradJ(i, j);
 			}
@@ -76,13 +74,15 @@ public class UpdatingParameters extends ConsoleProgram
 		return sumGradients;
 	}
 	
-	private double calcGradJ(int t, int feature)
+	private double calcGradJ(int t, int indexFeature)
 	{
 		double gradJ = 0;
 
 		double correctiondt = calcCorrectiondt(t);
 		
-		gradJ += rewardFunction.featureValues.get(feature).get(t) * correctiondt;
+		gradJ = rewardFunction.featureValues.get(indexFeature).get(t) * 			correctiondt;
+		 
+		//System.out.println(rewardFunction.featureValues.get(feature).get(t)); 
 		 
 		return gradJ;
 	}
@@ -91,7 +91,7 @@ public class UpdatingParameters extends ConsoleProgram
 	{
 		double correctiondt = 0;
 		
-		for(int j=t;j<pastStates.size()-1;j++)
+		for(int j=t;j<pastStates.size();j++)
 		{
 			correctiondt += Math.pow(lambda, j-t) * tempDif(j); 
 		}
@@ -103,7 +103,7 @@ public class UpdatingParameters extends ConsoleProgram
 	// TODO: can be optemized, double code, double code everywhere...
 	private double tempDif(int j)
 	{
-		return rewardFunction.stateValues.get(j+1) - rewardFunction.stateValues.get(j);
+		return rewardFunction.stateValues.get(j+1) - 				 				rewardFunction.stateValues.get(j);
 	}
 	
 	private void updateParameters(double[] sumGradJ)

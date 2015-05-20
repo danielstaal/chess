@@ -21,7 +21,7 @@ public class Agent
 	private ArrayList<Double> parVector;
 	
 	/* reward function in pastStates */
-	private ArrayList<Double> featureValues = new ArrayList<Double>(); 
+	public ArrayList<Double> stateValues = new ArrayList<Double>(); 
 	
 	/* to access extra methods */
 	private Extra extra = new Extra();
@@ -49,7 +49,7 @@ public class Agent
 		parVector = parVec;
 		
 		allPosNextStates = new AllNextStates(chessBoard);
-		rewardFunction = new RewardFunction(allPosNextStates, chessBoard, parVector, featureValues);
+		rewardFunction = new RewardFunction(allPosNextStates, chessBoard, parVector, stateValues);
 		featCalc = new FeatureCalculation(chessBoard);
 		update = new UpdatingParameters(parVector, pastStates, rewardFunction);
 		

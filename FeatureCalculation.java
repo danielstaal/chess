@@ -65,10 +65,6 @@ public class FeatureCalculation
 			}
 		}
 		
-		System.out.print(CB.rook.getx());System.out.println(CB.rook.gety());
-		System.out.print(CB.blackKing.getx());System.out.println(CB.blackKing.gety());
-		System.out.println(squares);
-		
 		return normaliseFeature(squares, size * size);
 	}
 	
