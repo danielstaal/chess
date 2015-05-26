@@ -37,7 +37,7 @@ public class Main extends ConsoleProgram
 	boolean randomMoves = false;
 	
 	/* number of games to be played by the agents */
-	private double numberOfGames = 300;
+	private double numberOfGames = 500;
 	
 	/* Mean number of moves per game */
 	private int numOfMoves;
@@ -50,7 +50,7 @@ public class Main extends ConsoleProgram
 	private boolean result = true;
 	
 	/* number of features */
-	private int numberOfFeatures = 1;
+	private int numberOfFeatures = 4;
 	
 	/* checkmates,stalemates,remis */
 	private int checkMates = 0;
@@ -80,7 +80,7 @@ public class Main extends ConsoleProgram
 	Tester tester = new Tester(chessBoard, agent, initPos);
 	
 	/* is this a testing round? */
-	boolean testing = true;
+	boolean testing = false;
 	
 /////////////////////////////////////////////////////////////////////////
 // Main function

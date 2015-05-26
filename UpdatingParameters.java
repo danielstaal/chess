@@ -107,7 +107,7 @@ public class UpdatingParameters extends ConsoleProgram
 	
 	// TODO: can be optemized, double code, double code everywhere...
 	private double tempDif(int j)
-	{
+	{	
 		return rewardFunction.stateValues.get(j+1) - 				 				rewardFunction.stateValues.get(j);
 	}
 	
@@ -116,10 +116,10 @@ public class UpdatingParameters extends ConsoleProgram
 
 		for(int i=0; i<parVector.size();i++)
 		{
-			double feature = parVector.get(i);
+			double weightValue = parVector.get(i);
 
-			parVector.set(i, feature + learningRate*sumGradJ[i]);
-			System.out.print("FeatureValue:");System.out.println(parVector.get(i));
+			//System.out.print("weightValue:");System.out.println(parVector.get(i));
+			parVector.set(i, weightValue + learningRate*sumGradJ[i]);
 		}
 	}
 	

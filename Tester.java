@@ -21,7 +21,7 @@ public class Tester extends ConsoleProgram
 	private Agent agent;
 	private BoardPosition initPos;
 	
-	private int numberOfTestRounds = 10;
+	private int numberOfTestRounds = 2;
 	
 	private ArrayList<Double> rewardValues = new ArrayList<Double>();
 	
