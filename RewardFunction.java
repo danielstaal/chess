@@ -61,13 +61,14 @@ public class RewardFunction extends ConsoleProgram
 	
 	public BoardPosition findHighestReward(ArrayList<BoardPosition> allPosNextMoves)
 	{
-		double reward = -10000000;
+		double reward = -1000000;
 		double thisReward;
 		BoardPosition bestBoardPosition = null;
 		
 		for(int i=0;i<allPosNextMoves.size();i++)
 		{
-			thisReward = calcReward (allPosNextMoves.get(i));
+			thisReward = calcReward(allPosNextMoves.get(i));
+			
 			if(thisReward > reward)
 			{
 				reward = thisReward;
@@ -99,18 +100,34 @@ public class RewardFunction extends ConsoleProgram
 		
 		///////////////// Feature rewards:
 		
-		double feature0 = parVector.get(0) * thisFC.distanceToEdgeBlackKing();
-		featureValues.get(0).add(feature0);
+//		double feature0 = parVector.get(0) * thisFC.distanceToEdgeBlackKing();
+//		featureValues.get(0).add(feature0);
 		
-		double feature1 = parVector.get(1) * thisFC.kingProtectsRook();	
-		featureValues.get(1).add(feature1);
+//		double feature1 = parVector.get(1) * thisFC.kingProtectsRook();	
+//		featureValues.get(1).add(feature1);
 		
-		double feature2 = parVector.get(2) * thisFC.squaresOfKingvsRook();	
-		featureValues.get(2).add(feature2);	
-		
-//		double feature3 = parVector.get(3) * thisFC.noOfPosSquaresk();	
-//		featureValues.get(3).add(feature3);	
+//		double feature1 = parVector.get(1) * thisFC.noOfPosSquaresk();	
+//		featureValues.get(1).add(feature1);	
+//			
+		double featureValue0 = thisFC.squaresOfKingvsRook();
+		double feature0 = parVector.get(0) * featureValue0;	
+		featureValues.get(0).add(featureValue0);
+	
 							
-		return feature0 + feature1 + feature2;// + feature3; 
+		return feature0;// + feature1 + feature2;// + feature3; 
 	}
+	
+	public void clearFeatureValues()
+	{
+		for(int i=0;i<featureValues.size();i++)
+		{
+			featureValues.get(i).clear();
+		}
+	}	
+	
 }
+
+
+
+
+

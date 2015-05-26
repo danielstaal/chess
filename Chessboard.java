@@ -28,7 +28,7 @@ public class Chessboard extends ConsoleProgram
 	private boolean staleMate = false;
 	
 	/* Size of Chessboard*/
-	private int size = 5;
+	private int size = 4;
 	
 	/* Pieces */
 	BlackKing blackKing;

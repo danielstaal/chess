@@ -31,26 +31,26 @@ public class Main extends ConsoleProgram
 	private int numberOfDataFile = 1;
 	
 	/* Do you want to print the board? */
-	private boolean printing = true;
+	private boolean printing = false;
 	
 	/* randommoves or not */
 	boolean randomMoves = false;
 	
 	/* number of games to be played by the agents */
-	private double numberOfGames = 1;
+	private double numberOfGames = 300;
 	
 	/* Mean number of moves per game */
 	private int numOfMoves;
 	private double mean = 0.0; 
 	
 	/* max number of moves */
-	private int maxNumberOfMoves = 5;
+	private int maxNumberOfMoves = 17;
 	
 	/* did the game reach a terminal state */
 	private boolean result = true;
 	
 	/* number of features */
-	private int numberOfFeatures = 3;
+	private int numberOfFeatures = 1;
 	
 	/* checkmates,stalemates,remis */
 	private int checkMates = 0;
@@ -60,7 +60,7 @@ public class Main extends ConsoleProgram
 	/* Standard initial positions */
 	static private GPoint blackKing = new GPoint(0,0);
 	static private GPoint whiteKing = new GPoint(0,2);
-	static private GPoint rook = new GPoint(2,2);
+	static private GPoint rook = new GPoint(3,3);
 	
 	/* initial BoardPosition */
 	private BoardPosition initPos = new BoardPosition(blackKing, whiteKing, rook);
@@ -76,6 +76,12 @@ public class Main extends ConsoleProgram
 	/* initiate agent */
 	Agent agent = new Agent(chessBoard, parVector, randomMoves);
 	
+	/* initiate Testing object */
+	Tester tester = new Tester(chessBoard, agent, initPos);
+	
+	/* is this a testing round? */
+	boolean testing = true;
+	
 /////////////////////////////////////////////////////////////////////////
 // Main function
 //	- playing the game
@@ -89,36 +95,11 @@ public class Main extends ConsoleProgram
 		
 		agent.update.initiateParVector(numberOfFeatures);
 
-		// play games and learn on data
-		for(int i=0; i<numberOfGames; i++)
-		{
-			if(i == numberOfGames - 1)
-			{
-				printing = true;
-			}
-			
-			// see progress per 100 games
-			if(i % 100 == 0)
-			{
-				print("after ");print(i);println(" games:");
-				print("checkmates:");println(checkMates);
-				print("stalemates:");println(staleMates);
-				print("remis:");println(remis);
-			}
-			
-			// set a result for a game to true
-			result = true;
-			
-			// play a single game
-			playAGame();
+		//Testing.test()
 
-			// if a terminal state is achieved, update parameters
-			if(result && !randomMoves && numOfMoves>1)
-			{
-				agent.update.learnOnData();
-			}
-			resetBoard();
-		}
+		playGamesLearnOnData();
+	
+		
 		printResult();
 		long endTime = System.nanoTime();
 		long duration = (endTime - startTime)/1000000000;
@@ -129,16 +110,55 @@ public class Main extends ConsoleProgram
 // Chess playing
 /////////////////////////////////////////////////////////////////////////
 	
+	private void playGamesLearnOnData()
+	{
+	// play games and learn on data
+	
+		if(testing)
+		{
+			tester.test();
+		}
+		else
+		{
+			for(int i=0; i<numberOfGames; i++)
+			{
+				if(i == numberOfGames - 1)
+				{
+					printing = true;
+				}
+			
+				// see progress per 100 games
+				if(i % 100 == 0)
+				{
+					print("after ");print(i);println(" games:");
+					print("checkmates:");println(checkMates);
+					print("stalemates:");println(staleMates);
+					print("remis:");println(remis);
+				}
+			
+				// set a result for a game to true
+				result = true;
+			
+				// play a single game
+				playAGame();
+
+				// if a terminal state is achieved, update parameters
+				if(result && !randomMoves && numOfMoves>1)
+				{
+					agent.update.learnOnData();
+				}
+			
+				resetValues();
+			}
+		}
+	}
+	
 	private void playAGame()
 	{
 		if(printing)
 		{
 			printChessboard();
 		}
-		
-		// clear all past positions
-		agent.pastStates.clear();
-		agent.rewardFunction.stateValues.clear();
 		
 		playMoves();
 
@@ -247,6 +267,18 @@ public class Main extends ConsoleProgram
 			println();
 		}
 	}	
+	
+	private void resetValues()
+	{
+		// clear all past positions
+		agent.pastStates.clear();
+		
+		agent.rewardFunction.stateValues.clear();
+			
+		agent.rewardFunction.clearFeatureValues();
+	
+		resetBoard();
+	}
 	
 	private void resetBoard()
 	{

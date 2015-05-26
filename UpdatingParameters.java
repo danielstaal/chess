@@ -41,7 +41,8 @@ public class UpdatingParameters extends ConsoleProgram
 	{
 		for(int i=0;i<numOfFeatures;i++)
 		{	
-			parVector.add(-0.5);	
+			parVector.add(0.5);
+			// to keep track of all calculated feature values	
 			rewardFunction.featureValues.add(new ArrayList<Double>());
 		}		
 	}
@@ -51,6 +52,8 @@ public class UpdatingParameters extends ConsoleProgram
 		double[] sumGradJ = sumGradJ();
 
 		updateParameters(sumGradJ);
+		
+		//normaliseWeights();
 		
 //		for(int i=0;i<rewardFunction.featureValues.get(0).size();i++)
 //		{
@@ -63,12 +66,15 @@ public class UpdatingParameters extends ConsoleProgram
 		double[] sumGradients = new double[parVector.size()];
 	
 		// update every weight
-		for(int j=0; j<parVector.size();j++)
+		for(int weight=0; weight<parVector.size();weight++)
 		{
 			// For each past state calc the gradient * correctiondt
-			for(int i=0; i<pastStates.size();i++)
+			for(int t=0; t<pastStates.size();t++)
 			{
-				sumGradients[j] += calcGradJ(i, j);
+				sumGradients[weight] += calcGradJ(t, weight);
+				
+				System.out.print(t);System.out.print(" gradient value:");
+				System.out.println(sumGradients[weight]);
 			}
 		}
 		return sumGradients;
@@ -79,10 +85,8 @@ public class UpdatingParameters extends ConsoleProgram
 		double gradJ = 0;
 
 		double correctiondt = calcCorrectiondt(t);
-		
+
 		gradJ = rewardFunction.featureValues.get(indexFeature).get(t) * 			correctiondt;
-		 
-		//System.out.println(rewardFunction.featureValues.get(feature).get(t)); 
 		 
 		return gradJ;
 	}
@@ -90,6 +94,7 @@ public class UpdatingParameters extends ConsoleProgram
 	private double calcCorrectiondt(int t)
 	{
 		double correctiondt = 0;
+		
 		
 		for(int j=t;j<pastStates.size();j++)
 		{
@@ -114,6 +119,7 @@ public class UpdatingParameters extends ConsoleProgram
 			double feature = parVector.get(i);
 
 			parVector.set(i, feature + learningRate*sumGradJ[i]);
+			System.out.print("FeatureValue:");System.out.println(parVector.get(i));
 		}
 	}
 	
