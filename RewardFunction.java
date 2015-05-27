@@ -27,6 +27,8 @@ public class RewardFunction extends ConsoleProgram
 	private ArrayList<Double> parVector;
 	public ArrayList<Double> stateValues;
 	
+	private ArrayList<String> featureNames = new ArrayList<String>();
+	
 	/* multidimensional arraylist to keep track of feature values */
 	public ArrayList<ArrayList<Double>> featureValues = new ArrayList<ArrayList<Double>>();
 	
@@ -85,6 +87,22 @@ public class RewardFunction extends ConsoleProgram
 
 		return bestBoardPosition;
 	}
+
+	
+	public void createFeatureNameArrayList()
+	{
+		String f1 = "squaresOfKingvsRook()";
+		String f2 = "noOfPosSquaresk()";
+		String f3 = "distanceToEdgeBlackKing()";
+		String f4 = "kingProtectsRook()";
+		String f5 = "distanceBetweenWhiteRookAndBlackKing()";
+		
+		featureNames.add(f1);
+		featureNames.add(f2);
+		featureNames.add(f3);		
+		featureNames.add(f4);
+		featureNames.add(f5);
+	}
 		
 	public double calcReward(BoardPosition pos)
 	{
@@ -99,24 +117,24 @@ public class RewardFunction extends ConsoleProgram
 		
 		
 		///////////////// Feature rewards:
-					
+
 		double featureValue0 = thisFC.squaresOfKingvsRook();
-		double feature0 = parVector.get(0) * featureValue0;	
-		featureValues.get(0).add(featureValue0);
-		
 		double featureValue1 = thisFC.noOfPosSquaresk();
-		double feature1 = parVector.get(1) * featureValue1;	
-		featureValues.get(1).add(featureValue1);
-		
 		double featureValue2 = thisFC.distanceToEdgeBlackKing();
-		double feature2 = parVector.get(2) * featureValue2;	
-		featureValues.get(2).add(featureValue2);
-		
 		double featureValue3 = thisFC.kingProtectsRook();
-		double feature3 = parVector.get(3) * featureValue3;	
-		featureValues.get(3).add(featureValue3);	
-							
-		return feature0 + feature1 + feature2;// + feature3; 
+		double featureValue4 = thisFC.distanceBetweenWhiteRookAndBlackKing();
+		
+		double[] thisFeatureValues = {featureValue0, featureValue1,featureValue2,featureValue3,featureValue4};
+			
+		double evaluation;
+				
+		for(int i=0;i<parVector.size();i++)
+		{
+			evaluation = parVector.get(i) * thisFeatureValues[i];	
+			featureValues.get(i).add(thisFeatureValues[i]);
+			reward += evaluation;
+		}
+		return reward;
 	}
 	
 	public void clearFeatureValues()
@@ -126,6 +144,7 @@ public class RewardFunction extends ConsoleProgram
 			featureValues.get(i).clear();
 		}
 	}	
+
 	
 }
 

@@ -78,6 +78,16 @@ public class FeatureCalculation
 		return 1;
 	}
 	
+	public double distanceBetweenWhiteRookAndBlackKing()
+	{
+		double xDistance = Math.abs(CB.rook.getx() - CB.blackKing.getx());
+		double yDistance = Math.abs(CB.rook.gety() - CB.blackKing.gety());
+		
+		double totalDis = xDistance + yDistance;
+		
+		return normaliseFeature(totalDis, (CB.getCBSize()-1)*(CB.getCBSize()-1));
+	}
+	
 	public double rookChecksBlackKing()
 	{
 		GPoint kCoor = new GPoint(CB.blackKing.getx(), CB.blackKing.gety());

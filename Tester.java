@@ -21,7 +21,7 @@ public class Tester extends ConsoleProgram
 	private Agent agent;
 	private BoardPosition initPos;
 	
-	private int numberOfTestRounds = 2;
+	private int numberOfTestRounds = 1;
 	
 	private ArrayList<Double> rewardValues = new ArrayList<Double>();
 	
@@ -42,6 +42,7 @@ public class Tester extends ConsoleProgram
 	
 	private void testGames()
 	{
+		printBoard();
 		makeMoves();
 		agent.rewardFunction.stateValues.add(2000.0);
 		

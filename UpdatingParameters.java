@@ -41,7 +41,7 @@ public class UpdatingParameters extends ConsoleProgram
 	{
 		for(int i=0;i<numOfFeatures;i++)
 		{	
-			parVector.add(0.5);
+			parVector.add(-0.1);
 			// to keep track of all calculated feature values	
 			rewardFunction.featureValues.add(new ArrayList<Double>());
 		}		
@@ -73,8 +73,8 @@ public class UpdatingParameters extends ConsoleProgram
 			{
 				sumGradients[weight] += calcGradJ(t, weight);
 				
-				System.out.print(t);System.out.print(" gradient value:");
-				System.out.println(sumGradients[weight]);
+				//System.out.print(t);System.out.print(" gradient value:");
+				//System.out.println(sumGradients[weight]);
 			}
 		}
 		return sumGradients;

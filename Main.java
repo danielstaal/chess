@@ -26,9 +26,6 @@ public class Main extends ConsoleProgram
 //		- set printing on/off
 //		- declare number of games to be played
 /////////////////////////////////////////////////////////////////////////
-
-	/* To distinguish datafiles */
-	private int numberOfDataFile = 1;
 	
 	/* Do you want to print the board? */
 	private boolean printing = false;
@@ -82,6 +79,12 @@ public class Main extends ConsoleProgram
 	/* is this a testing round? */
 	boolean testing = false;
 	
+	/* File writer */
+	WriteToFile fileWriter = new WriteToFile(parVector);
+	
+	/* use earlier parameter vector testData */
+	boolean useTestData = false;
+	
 /////////////////////////////////////////////////////////////////////////
 // Main function
 //	- playing the game
@@ -94,11 +97,13 @@ public class Main extends ConsoleProgram
 		long startTime = System.nanoTime();
 		
 		agent.update.initiateParVector(numberOfFeatures);
-
-		//Testing.test()
+		
+		if(useTestData)
+		{
+			fileWriter.readFile();
+		}
 
 		playGamesLearnOnData();
-	
 		
 		printResult();
 		long endTime = System.nanoTime();
@@ -150,6 +155,8 @@ public class Main extends ConsoleProgram
 			
 				resetValues();
 			}
+			
+			fileWriter.writeFileParVector();
 		}
 	}
 	
@@ -299,44 +306,6 @@ public class Main extends ConsoleProgram
 			println(parVector.get(i));
 		}
 	}
-	
-//	private void writeFilePosSquaresk()
-//	{
-//		// FEATURE: num pos squares
-//		String stringPosSquaresk = "";
-//		for(int i=0; i<posSquaresk.size();i++)
-//		{
-//			stringPosSquaresk += posSquaresk.get(i);
-//		}
-//		fileWriting(stringPosSquaresk);
-//	}
-	
-//	private void fileWriting(String content)
-//	{
-//		String fileName = "testData" + numberOfDataFile + ".txt";
-//		// to increment the name of the datafile
-//		numberOfDataFile++;
-//		
-//		try {
-// 
-//			File file = new File("/home/jharvard/java/chess/data/" + fileName);
-// 
-//			// if file doesnt exists, then create it
-//			if (!file.exists()) {
-//				file.createNewFile();
-//			}
-// 
-//			FileWriter fw = new FileWriter(file.getAbsoluteFile());
-//			BufferedWriter bw = new BufferedWriter(fw);
-//			bw.write(content);
-//			bw.close();
-// 
-//			System.out.println("Done");
-// 
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
 }
 
 
