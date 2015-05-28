@@ -22,12 +22,13 @@ public class RewardFunction extends ConsoleProgram
 // Reward function
 /////////////////////////////////////////////////////////////////////////
 
+	/* */
 	private AllNextStates allPosNextStates;
 	private Chessboard chessBoard;
 	private ArrayList<Double> parVector;
 	public ArrayList<Double> stateValues;
 	
-	private ArrayList<String> featureNames = new ArrayList<String>();
+	public ArrayList<String> featureNames = new ArrayList<String>();
 	
 	/* multidimensional arraylist to keep track of feature values */
 	public ArrayList<ArrayList<Double>> featureValues = new ArrayList<ArrayList<Double>>();
@@ -41,6 +42,8 @@ public class RewardFunction extends ConsoleProgram
 		chessBoard = board;
 		parVector = pV;
 		stateValues = sV;
+		
+		createFeatureNameArrayList();
 	}
 	
 	public void findBestMove()
@@ -91,11 +94,11 @@ public class RewardFunction extends ConsoleProgram
 	
 	public void createFeatureNameArrayList()
 	{
-		String f1 = "squaresOfKingvsRook()";
-		String f2 = "noOfPosSquaresk()";
-		String f3 = "distanceToEdgeBlackKing()";
-		String f4 = "kingProtectsRook()";
-		String f5 = "distanceBetweenWhiteRookAndBlackKing()";
+		String f1 = "squaresOfKingvsRook";
+		String f2 = "noOfPosSquaresk";
+		String f3 = "distanceToEdgeBlackKing";
+		String f4 = "distanceBetweenWhiteRookAndBlackKing";
+		String f5 = "kingProtectsRook";
 		
 		featureNames.add(f1);
 		featureNames.add(f2);
@@ -121,9 +124,9 @@ public class RewardFunction extends ConsoleProgram
 		double featureValue0 = thisFC.squaresOfKingvsRook();
 		double featureValue1 = thisFC.noOfPosSquaresk();
 		double featureValue2 = thisFC.distanceToEdgeBlackKing();
-		double featureValue3 = thisFC.kingProtectsRook();
-		double featureValue4 = thisFC.distanceBetweenWhiteRookAndBlackKing();
-		
+		double featureValue3 = thisFC.distanceBetweenWhiteRookAndBlackKing();
+		double featureValue4 = thisFC.kingProtectsRook();
+				
 		double[] thisFeatureValues = {featureValue0, featureValue1,featureValue2,featureValue3,featureValue4};
 			
 		double evaluation;

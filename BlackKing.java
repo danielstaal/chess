@@ -115,7 +115,7 @@ public class BlackKing extends Piece
 		return false;
 	}
 	
-	private boolean kingNotInCheck(GPoint kCoor)
+	public boolean kingNotInCheck(GPoint kCoor)
 	{
 		boolean K = notCheckK(kCoor);
 		boolean R = notCheckR(kCoor);

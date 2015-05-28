@@ -18,6 +18,7 @@ import java.io.*;
 
 public class Agent
 {
+	/* the parameter vector with all the weights */
 	private ArrayList<Double> parVector;
 	
 	/* reward function in pastStates */
@@ -28,7 +29,6 @@ public class Agent
 	
 	/* arraylist for all boardpositions in a game */
 	public ArrayList<BoardPosition> pastStates = new ArrayList<BoardPosition>();
-	private FeatureCalculation featCalc;
 	
 	/* to access calc all next moves */
 	private AllNextStates allPosNextStates;
@@ -50,7 +50,6 @@ public class Agent
 		
 		allPosNextStates = new AllNextStates(chessBoard);
 		rewardFunction = new RewardFunction(allPosNextStates, chessBoard, parVector, stateValues);
-		featCalc = new FeatureCalculation(chessBoard);
 		update = new UpdatingParameters(parVector, pastStates, rewardFunction);
 		
 		randomMoves = random;

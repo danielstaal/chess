@@ -58,6 +58,7 @@ public class Chessboard extends ConsoleProgram
 // Rearranging the Chessboard
 /////////////////////////////////////////////////////////////////////////
 
+	// fill chessboard with "."
 	public void fillEmptyChessboard()
 	{
 		for(int j=0; j<CBarray.length; j++)
@@ -69,6 +70,7 @@ public class Chessboard extends ConsoleProgram
 		}
 	}
 	
+	// add the pieces to the board
 	public void addKRKtoChessboard()
 	{
 		CBarray[blackKing.getx()][blackKing.gety()] = 'k';
@@ -119,6 +121,8 @@ public class Chessboard extends ConsoleProgram
 	{
 		checkMate = flag;
 	} 
+	
+	// reset to the same initial position
 	public void resetPosition(BoardPosition pos)
 	{
 		blackKing.setx((int)pos.getk().getX());
@@ -127,22 +131,62 @@ public class Chessboard extends ConsoleProgram
 		whiteKing.sety((int)pos.getK().getY());
 		rook.setx((int)pos.getR().getX());
 		rook.sety((int)pos.getR().getY());
-		
+
+		fillEmptyChessboard();
+		addKRKtoChessboard();		
 		staleMate = false;
 		checkMate = false;
 		rook.setRookAlive(true);
 	}
 	
+	// reset to a random position
 	public void resetRandom()
 	{
-		// size min because of array bounds
-		blackKing.setx(extra.randInt(0,size-1));
-		blackKing.sety(extra.randInt(0,size-1));
-		whiteKing.setx(extra.randInt(0,size-1));
-		whiteKing.sety(extra.randInt(0,size-1));
-		rook.setx(extra.randInt(0,size-1));
-		rook.sety(extra.randInt(0,size-1));
+	
+	// black king 		
+		// size min 1 because of array bounds
+		int blackKingX = extra.randInt(0,size-1);
+		int blackKingY = extra.randInt(0,size-1);
 		
+		blackKing.setx(blackKingX);
+		blackKing.sety(blackKingY);
+		
+	// white king
+		int whiteKingX = extra.randInt(0,size-1);
+		int whiteKingY = extra.randInt(0,size-1);
+		
+		while(whiteKingX == blackKingX && whiteKingY == blackKingY)
+		{
+			whiteKingX = extra.randInt(0,size-1);
+			whiteKingY = extra.randInt(0,size-1);
+		}
+		
+		whiteKing.setx(whiteKingX);
+		whiteKing.sety(whiteKingY);
+		
+	// white rook	
+		int whiteRookX = extra.randInt(0,size-1);
+		int whiteRookY = extra.randInt(0,size-1);
+		
+		while((whiteRookX == blackKingX && whiteRookY == blackKingY) || (whiteRookX == whiteKingX && whiteRookY == whiteKingY))
+		{
+			whiteRookX = extra.randInt(0,size-1);
+			whiteRookY = extra.randInt(0,size-1);
+		}
+			
+		rook.setx(whiteRookX);
+		rook.sety(whiteRookY);
+		
+		GPoint kCoor = new GPoint(blackKingX, blackKingY);
+		
+		if(!blackKing.kingNotInCheck(kCoor))
+		{
+			//Recursion!
+			resetRandom();
+		}
+		
+		fillEmptyChessboard();
+		addKRKtoChessboard();
 		staleMate = false;
 		checkMate = false;
 		rook.setRookAlive(true);

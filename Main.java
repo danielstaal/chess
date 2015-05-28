@@ -23,42 +23,48 @@ public class Main extends ConsoleProgram
 // Public variables
 //
 // Actions to do here:
-//		- set printing on/off
-//		- declare number of games to be played
+//		- change starting parameters
 /////////////////////////////////////////////////////////////////////////
 	
 	/* Do you want to print the board? */
 	private boolean printing = false;
 	
 	/* randommoves or not */
-	boolean randomMoves = false;
+	private boolean randomMoves = false;
+	
+	/* random initial positions */
+	private boolean randomPositions = true;
+	
+	/* use earlier calculated parameter vector testData */
+	private boolean useTestData = false;	
+	
+	/* is this a testing round? */
+	private boolean testing = false;
 	
 	/* number of games to be played by the agents */
-	private double numberOfGames = 500;
-	
-	/* Mean number of moves per game */
-	private int numOfMoves;
-	private double mean = 0.0; 
+	private double numberOfGames = 3;
 	
 	/* max number of moves */
-	private int maxNumberOfMoves = 17;
+	private int maxNumberOfMoves = 10;
 	
-	/* did the game reach a terminal state */
-	private boolean result = true;
-	
-	/* number of features */
+	/* number of features used in the parameter vector*/
 	private int numberOfFeatures = 4;
 	
-	/* checkmates,stalemates,remis */
-	private int checkMates = 0;
-	private int staleMates = 0;
-	private int remis = 0;
-	
-	/* Standard initial positions */
+	/* Initial position */
 	static private GPoint blackKing = new GPoint(0,0);
 	static private GPoint whiteKing = new GPoint(0,2);
 	static private GPoint rook = new GPoint(3,3);
 	
+	/* rewards */
+	private double checkMateReward = 2000.0;
+	private double staleMateReward = 2000.0;
+	private double remisReward = -2000.0;
+	
+	
+/////////////////////////////////////////////////////////////////////////
+// Do NOT change these Public variables
+/////////////////////////////////////////////////////////////////////////
+
 	/* initial BoardPosition */
 	private BoardPosition initPos = new BoardPosition(blackKing, whiteKing, rook);
 	/* Chessboard */
@@ -76,14 +82,20 @@ public class Main extends ConsoleProgram
 	/* initiate Testing object */
 	Tester tester = new Tester(chessBoard, agent, initPos);
 	
-	/* is this a testing round? */
-	boolean testing = false;
-	
 	/* File writer */
 	WriteToFile fileWriter = new WriteToFile(parVector);
 	
-	/* use earlier parameter vector testData */
-	boolean useTestData = false;
+	/* did the game reach a terminal state */
+	private boolean result = true;	
+
+	/* checkmates,stalemates,remis */
+	private int checkMates = 0;
+	private int staleMates = 0;
+	private int remis = 0;
+		
+	/* Mean number of moves per game */
+	private int numOfMoves;
+	private double mean = 0.0; 
 	
 /////////////////////////////////////////////////////////////////////////
 // Main function
@@ -143,7 +155,7 @@ public class Main extends ConsoleProgram
 			
 				// set a result for a game to true
 				result = true;
-			
+								
 				// play a single game
 				playAGame();
 
@@ -152,8 +164,6 @@ public class Main extends ConsoleProgram
 				{
 					agent.update.learnOnData();
 				}
-			
-				resetValues();
 			}
 			
 			fileWriter.writeFileParVector();
@@ -164,14 +174,19 @@ public class Main extends ConsoleProgram
 	{
 		if(printing)
 		{
-			printChessboard();
+			println("");
+			println("Initial Position:");
 		}
+		
+		printChessboard();
 		
 		playMoves();
 
 		mean += numOfMoves;
 		
 		checkWhatEnding();
+		
+		resetValues();
 	}
 	
 	private void checkWhatEnding()
@@ -191,30 +206,12 @@ public class Main extends ConsoleProgram
 		else{result = false;}
 	}
 		
-	private void checkMate()
-	{
-		checkMates++;
-		agent.stateValues.add(2000.0);
-	}
-	
-	private void remis()
-	{
-		remis++;
-		agent.stateValues.add(-2000.0);
-	}
-	
-	private void staleMate()
-	{
-		staleMates++;
-		agent.stateValues.add(2000.0);
-	}
-		
 	private void playMoves()
 	{
 		numOfMoves = 0;
 		
 		while(numOfMoves < maxNumberOfMoves)
-		{
+		{	
 			blackMove();
 			
 			if(printing)
@@ -234,14 +231,13 @@ public class Main extends ConsoleProgram
 
 			agent.makeMove();
 
-			//print("  reward:");println(agent.stateValues.get(numOfMoves));
-
 			if(printing)
 			{
 				print("After white move");
 				println();
 				printChessboard();
 			}
+
 			numOfMoves++;
 		}
 	}	
@@ -250,16 +246,29 @@ public class Main extends ConsoleProgram
 	{
 		chessBoard.blackKing.randomMovek();
 	}
-	
-	
-
+		
 /////////////////////////////////////////////////////////////////////////
-//  Printing results and chessboard
-//  
-//	File writing and File reading
-// 
-// - the learning process will be computed below using Bufferedwriters
-//   and bufferedreaders
+//  Rewards
+/////////////////////////////////////////////////////////////////////////
+	private void checkMate()
+	{
+		checkMates++;
+		agent.stateValues.add(checkMateReward);
+	}
+	
+	private void remis()
+	{
+		remis++;
+		agent.stateValues.add(remisReward);
+	}
+	
+	private void staleMate()
+	{
+		staleMates++;
+		agent.stateValues.add(staleMateReward);
+	}
+/////////////////////////////////////////////////////////////////////////
+//  Printing
 /////////////////////////////////////////////////////////////////////////
 
 	private void printChessboard()
@@ -289,8 +298,11 @@ public class Main extends ConsoleProgram
 	
 	private void resetBoard()
 	{
-		chessBoard.resetPosition(initPos);
-		//chessBoard.resetRandom();
+		if(randomPositions)
+		{
+			chessBoard.resetRandom();
+		}
+		else{chessBoard.resetPosition(initPos);}
 	}
 	
 	private void printResult()
@@ -300,10 +312,10 @@ public class Main extends ConsoleProgram
 		print("stalemates:");println(staleMates);
 		print("remis:");println(remis);
 		print("Mean number of moves per game:");println(mean/numberOfGames);
-		print("Final weight value:");
+		println("Final weight values:");
 		for(int i=0; i<parVector.size();i++)
 		{
-			println(parVector.get(i));
+			print(agent.rewardFunction.featureNames.get(i));print(":");				  				println(parVector.get(i));
 		}
 	}
 }
