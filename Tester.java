@@ -44,7 +44,7 @@ public class Tester extends ConsoleProgram
 	{
 		printBoard();
 		makeMoves();
-		agent.rewardFunction.stateValues.add(2000.0);
+		agent.rewardFunction.stateValues.add(2.0);
 		
 		for(int i=0;i<agent.rewardFunction.stateValues.size();i++)
 		{
@@ -69,13 +69,14 @@ public class Tester extends ConsoleProgram
 		{
 			makeForcedMove(positions.get(i));
 			
+			printBoard();
+			
 			// To create feature values array in agent
 			if(i%2==1)
 			{
 				calcReward(positions.get(i));
 			}
-			
-			printBoard();
+
 		}
 		
 	}
@@ -87,8 +88,10 @@ public class Tester extends ConsoleProgram
 	
 	private void calcReward(BoardPosition pos)
 	{
-		double reward = agent.rewardFunction.calcReward(pos);
-		agent.rewardFunction.stateValues.add(reward);
+		double rewardAndFeatureValues[] = agent.rewardFunction.calcReward(pos);
+		agent.rewardFunction.stateValues.add(rewardAndFeatureValues[0]);
+		
+		agent.rewardFunction.addFeatureValues(rewardAndFeatureValues);
 		
 		//System.out.println(reward);
 	}
@@ -105,21 +108,24 @@ public class Tester extends ConsoleProgram
 		GPoint RCoor = new GPoint(3,3);
 		BoardPosition pos1 = new BoardPosition(kCoor, KCoor, RCoor);
 		
+		// black move	
 		kCoor = new GPoint(1,0);
 		KCoor = new GPoint(0,2);
 		RCoor = new GPoint(3,3);		
 		BoardPosition pos2 = new BoardPosition(kCoor, KCoor, RCoor);
 		
+		// white move
 		kCoor = new GPoint(1,0);
 		KCoor = new GPoint(0,2);
 		RCoor = new GPoint(3,1);		
 		BoardPosition pos3 = new BoardPosition(kCoor, KCoor, RCoor);
 		
+		// black move
 		kCoor = new GPoint(0,0);
 		KCoor = new GPoint(0,2);
 		RCoor = new GPoint(3,1);
 		BoardPosition pos4 = new BoardPosition(kCoor, KCoor, RCoor);
-		
+		// white move
 		kCoor = new GPoint(0,0);
 		KCoor = new GPoint(0,2);
 		RCoor = new GPoint(1,1);

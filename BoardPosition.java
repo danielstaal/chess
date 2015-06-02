@@ -1,9 +1,11 @@
 /*
- * File: Chessboard.java
+ * File: BoardPosition.java
  * -------------------
  * Name: Daniel Staal
  * 
- * In this file the chessBoard is described
+ * Main Components:
+ *		- GPoint for each piece on the board
+
  */
 
 import acm.graphics.*;

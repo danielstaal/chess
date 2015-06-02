@@ -3,7 +3,15 @@
  * -------------------
  * Name: Daniel Staal
  * 
- * This file will eventually implement the game of Chess.
+ * This is the main file of the chess endgame learner.
+ *
+ *
+ * Main Components:
+ *		- Playing Games
+ *		- Entering all other classes
+ *		- Changing all playing parameters except chessBoard size(Chessboard.java)
+ *		- Keeping track of terminal state scores
+ *		- Printing the board on the ConsoleProgram canvas
  */
 
 import acm.graphics.*;
@@ -36,29 +44,38 @@ public class Main extends ConsoleProgram
 	private boolean randomPositions = true;
 	
 	/* use earlier calculated parameter vector testData */
-	private boolean useTestData = false;	
+	private boolean useTestData = false;
+	
+	/* do you want to save the updated weights and overwrite the last ones? */
+	private boolean savingWeights = true;	
 	
 	/* is this a testing round? */
 	private boolean testing = false;
 	
 	/* number of games to be played by the agents */
-	private double numberOfGames = 3;
+	private double numberOfGames = 1500;
 	
 	/* max number of moves */
-	private int maxNumberOfMoves = 10;
+	private int maxNumberOfMoves = 20;
 	
 	/* number of features used in the parameter vector*/
-	private int numberOfFeatures = 4;
+	private int numberOfFeatures = 6;
 	
-	/* Initial position */
+	/* number of games per which terminal states are written */
+	private int writePlotPerNumber = 50;
+	
+	/* do you want a simple plot? */
+	private boolean plotting = true;
+	
+	/* initial position */
 	static private GPoint blackKing = new GPoint(0,0);
 	static private GPoint whiteKing = new GPoint(0,2);
-	static private GPoint rook = new GPoint(3,3);
+	static private GPoint rook = new GPoint(2,2);
 	
-	/* rewards */
-	private double checkMateReward = 2000.0;
-	private double staleMateReward = 2000.0;
-	private double remisReward = -2000.0;
+	/* terminal state rewards */
+	private double checkMateReward = 2.0;
+	private double staleMateReward = 2.0;
+	private double remisReward = -2.0;
 	
 	
 /////////////////////////////////////////////////////////////////////////
@@ -97,15 +114,21 @@ public class Main extends ConsoleProgram
 	private int numOfMoves;
 	private double mean = 0.0; 
 	
+	/* to plot a graph */ 
+	Plotter plotter = new Plotter(numberOfGames, writePlotPerNumber);
+
+	
 /////////////////////////////////////////////////////////////////////////
-// Main function
-//	- playing the game
+// run method
+//	- initiate the weights values
+//	- read in saved weights if requested
 //	- measuring time
+//	- print and plot the results
 /////////////////////////////////////////////////////////////////////////
 
+	
 	public void run()
 	{
-		// to time the learning process
 		long startTime = System.nanoTime();
 		
 		agent.update.initiateParVector(numberOfFeatures);
@@ -118,75 +141,161 @@ public class Main extends ConsoleProgram
 		playGamesLearnOnData();
 		
 		printResult();
+		
 		long endTime = System.nanoTime();
 		long duration = (endTime - startTime)/1000000000;
 		print("Time:");print(duration);print("seconds");
+		
+		if(plotting){plotter.plotValues();}
 	}
 	
 /////////////////////////////////////////////////////////////////////////
 // Chess playing
 /////////////////////////////////////////////////////////////////////////
 	
+	/*
+	- test or play games
+	- save weights if requested
+	*/
 	private void playGamesLearnOnData()
 	{
-	// play games and learn on data
-	
 		if(testing)
 		{
 			tester.test();
 		}
 		else
 		{
-			for(int i=0; i<numberOfGames; i++)
+			playGivenNumberOfGames();
+			
+			if(savingWeights)
 			{
-				if(i == numberOfGames - 1)
-				{
-					printing = true;
-				}
-			
-				// see progress per 100 games
-				if(i % 100 == 0)
-				{
-					print("after ");print(i);println(" games:");
-					print("checkmates:");println(checkMates);
-					print("stalemates:");println(staleMates);
-					print("remis:");println(remis);
-				}
-			
-				// set a result for a game to true
-				result = true;
-								
-				// play a single game
-				playAGame();
-
-				// if a terminal state is achieved, update parameters
-				if(result && !randomMoves && numOfMoves>1)
-				{
-					agent.update.learnOnData();
-				}
+				fileWriter.writeFileParVector();
 			}
-			
-			fileWriter.writeFileParVector();
 		}
 	}
 	
+	/*
+	- play a given number of games
+	- learn on data if:
+		- terminal state is achieved
+		- the moves are not random
+	- save and print terminal state values after each given number of games
+	*/
+	private void playGivenNumberOfGames()
+	{
+		for(int i=0; i<numberOfGames; i++)
+		{
+			if(i == numberOfGames - 1)
+			{
+				printing = true;
+			}
+		
+			// see progress per writePlotPerNumber of games
+			if(i % writePlotPerNumber == 0)
+			{
+				plotter.setCheckMateArray(checkMates, i/writePlotPerNumber);
+				plotter.setStaleMateArray(staleMates, i/writePlotPerNumber);
+				plotter.setRemisArray(remis, i/writePlotPerNumber);
+	
+				print("after ");print(i);println(" games:");
+				print("checkmates:");println(checkMates);
+				print("stalemates:");println(staleMates);
+				print("remis:");println(remis);
+				
+				// reset values, this is optional
+				checkMates = 0;
+				staleMates = 0;
+				remis = 0;	
+			}
+		
+			// set a result for a game to true
+			result = true;
+							
+			// play a single game
+			playAGame();
+
+			// if a terminal state is achieved, update parameters
+			if(result && !randomMoves && numOfMoves>1)
+			{
+				agent.update.learnOnData();
+			}
+			resetValues();
+		}
+	}
+	
+	/*
+	- if printing print the chessboard
+	- play the moves till terminal state or maxNumberOfMoves is reached
+	- calculate new mean
+	- check if and what terminal state is reached
+	*/ 
 	private void playAGame()
 	{
 		if(printing)
 		{
 			println("");
 			println("Initial Position:");
+			printChessboard();
 		}
-		
-		printChessboard();
 		
 		playMoves();
 
 		mean += numOfMoves;
 		
 		checkWhatEnding();
+	}
+	
+	/*
+	- keep track of the numOfMoves in this game
+	- moving the pieces
+		- play black move
+		- check if terminal state is reached, if so then break
+		- else add this state to pastStates array
+		- play white move
+	*/	
+	private void playMoves()
+	{
+		// set num of moves to 0
+		numOfMoves = 0;
 		
-		resetValues();
+		// play till max number of moves is reached
+		while(numOfMoves < maxNumberOfMoves)
+		{	
+			// black player makes a move
+			blackMove();
+			
+			ifPrinting("After black move");
+			
+			if(chessBoard.getCheckMate() || chessBoard.getStaleMate() || !chessBoard.rook.getRookAlive())
+			{
+				break;
+			}
+			
+			// after black move add current state to states
+			agent.pastStates.add(chessBoard.getBoardPosition());
+			
+			// white player makes a move
+			agent.makeMove();
+
+			ifPrinting("After white move");
+
+			numOfMoves++;
+		}
+	}	
+	
+	private void blackMove()
+	{
+		chessBoard.blackKing.randomMovek();
+	}
+	
+	private void ifPrinting(String player)
+	{
+		if(printing)
+		{
+			print(player);
+			println();
+			printChessboard();
+		}
 	}
 	
 	private void checkWhatEnding()
@@ -205,48 +314,7 @@ public class Main extends ConsoleProgram
 		}
 		else{result = false;}
 	}
-		
-	private void playMoves()
-	{
-		numOfMoves = 0;
-		
-		while(numOfMoves < maxNumberOfMoves)
-		{	
-			blackMove();
 			
-			if(printing)
-			{
-				print("After black move");
-				println();
-				printChessboard();
-			}
-			
-			if(chessBoard.getCheckMate() || chessBoard.getStaleMate() || !chessBoard.rook.getRookAlive())
-			{
-				break;
-			}
-			
-			// after black move add current state to states
-			agent.pastStates.add(chessBoard.getBoardPosition());
-
-			agent.makeMove();
-
-			if(printing)
-			{
-				print("After white move");
-				println();
-				printChessboard();
-			}
-
-			numOfMoves++;
-		}
-	}	
-	
-	private void blackMove()
-	{
-		chessBoard.blackKing.randomMovek();
-	}
-		
 /////////////////////////////////////////////////////////////////////////
 //  Rewards
 /////////////////////////////////////////////////////////////////////////
@@ -319,26 +387,3 @@ public class Main extends ConsoleProgram
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

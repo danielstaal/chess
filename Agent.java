@@ -3,7 +3,14 @@
  * -------------------
  * Name: Daniel Staal
  * 
- * In this file the chessBoard is described
+ * In this file the agent is described
+ * 
+ * 		- everything that has to to with the agent is described here
+ *
+ * Main Components:
+ *		-
+ *		-
+ *		-
  */
 
 import acm.graphics.*;
@@ -32,8 +39,10 @@ public class Agent
 	
 	/* to access calc all next moves */
 	private AllNextStates allPosNextStates;
+	
 	/* to access the reward function */
 	public RewardFunction rewardFunction;
+	
 	/* to access UpdatingParameters */
 	public UpdatingParameters update;
 	

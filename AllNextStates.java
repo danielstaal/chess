@@ -1,9 +1,11 @@
 /*
- * File: Chessboard.java
+ * File: AllNextStates.java
  * -------------------
  * Name: Daniel Staal
  * 
- * In this file the chessBoard is described
+ * 
+ * Main Components:
+ *		- finding all possible white moves
  */
 
 import acm.graphics.*;
@@ -29,6 +31,12 @@ public class AllNextStates
 		CB = board;
 	}
 	
+	/*
+	- find all pos moves for white king
+	- find all pos moves for rook
+	- make one array of these possible next positions
+	- return the array
+	*/
 	public ArrayList<BoardPosition> findAllPosNextStates()
 	{
 		ArrayList<BoardPosition> posPositions = new ArrayList<BoardPosition>();

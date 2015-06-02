@@ -3,7 +3,12 @@
  * -------------------
  * Name: Daniel Staal
  * 
- * In this file the chessBoard is described
+ *
+ * Main Components:
+ *		- chessboard size
+ *		- booleans whether this checkboard is in a terminal state
+ *		- methods to set a position to a given or random boardposition
+
  */
 
 import acm.graphics.*;
@@ -33,7 +38,10 @@ public class Chessboard extends ConsoleProgram
 	/* Pieces */
 	BlackKing blackKing;
 	WhiteKing whiteKing;
-	Rook rook;		
+	Rook rook;	
+	
+	/* BoardPosition */
+	public BoardPosition thisPosition;	
 	
 	/* to access extra methods */
 	Extra extra = new Extra();
@@ -49,6 +57,8 @@ public class Chessboard extends ConsoleProgram
 
 		fillEmptyChessboard();
 		addKRKtoChessboard();
+		
+		thisPosition = boardPos;
 	}
 	public Chessboard()
 	{

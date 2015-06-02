@@ -108,9 +108,9 @@ public class WhiteKing extends Piece
 		return false;
 	}
 	
-	private boolean notCheckk(GPoint kCoor)
+	public boolean notCheckk(GPoint KCoor)
 	{
-		if((kCoor.getX() >= CB.blackKing.getx()-1 && kCoor.getX() <= CB.blackKing.getx() + 1) && (kCoor.getY() >= CB.blackKing.gety()-1 && kCoor.getY() <= CB.blackKing.gety() + 1))
+		if((KCoor.getX() >= CB.blackKing.getx()-1 && KCoor.getX() <= CB.blackKing.getx() + 1) && (KCoor.getY() >= CB.blackKing.gety()-1 && KCoor.getY() <= CB.blackKing.gety() + 1))
 		{
 			return false;
 		}
