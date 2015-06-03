@@ -1,13 +1,11 @@
 /*
- * File: Chessboard.java
+ * File: FeatureCalculation.java
  * -------------------
  * Name: Daniel Staal
  * 
  * Main Components
- *	-
- *	-
- *	-
- *	-
+ *	- calculate feature values of given boardpositions
+ *	- return a value between 0 and 1
  */
 
 import acm.graphics.*;
@@ -41,6 +39,9 @@ public class FeatureCalculation
 		rookCoor = CB.thisPosition.getR();
 	}
 	
+	/*
+	- kings are two squares horizontal of vertical apart
+	*/
 	public double kingsInOpposition()
 	{
 		if(((whiteKingCoor.getX() == blackKingCoor.getX() + 2 || whiteKingCoor.getX() == blackKingCoor.getX() - 2) && whiteKingCoor.getY() == blackKingCoor.getY()) || ((whiteKingCoor.getY() == blackKingCoor.getY() + 2 || whiteKingCoor.getY() == blackKingCoor.getY() - 2) && whiteKingCoor.getX() == blackKingCoor.getX()))
@@ -51,6 +52,7 @@ public class FeatureCalculation
 		return 0.0;
 	}
 	
+	// check if rook is still alive
 	public double rookLost()
 	{
 		if(CB.rook.getx() == CB.blackKing.getx() && CB.rook.gety() == CB.blackKing.gety())
@@ -99,6 +101,8 @@ public class FeatureCalculation
 		return normaliseFeature(squares, size * size);
 	}
 	
+	// check if in this position the rook is threatened to be taken by the 
+	// black king
 	public double threatenedRook()
 	{
 		boolean blackKingAttacksRook = false;
@@ -120,6 +124,7 @@ public class FeatureCalculation
 		return 0.0;
 	}
 	
+	// check if the king can reach a certain square
 	private boolean kingReachesGPoint(GPoint king, GPoint piece)
 	{
 		int kingX = (int)king.getX();
@@ -133,11 +138,10 @@ public class FeatureCalculation
 		}			
 		return false;
 	}
-	
+
+	// check if the white king protects the white rook	
 	public double kingProtectsRook()
 	{
-//		GPoint RCoor = new GPoint(CB.rook.getx(), CB.rook.gety());
-//		GPoint KCoor = new GPoint(CB.whiteKing.getx(), CB.whiteKing.gety());
 		if(kingReachesGPoint(whiteKingCoor, rookCoor))
 		{
 			return 0;
@@ -157,7 +161,6 @@ public class FeatureCalculation
 	
 	public double rookChecksBlackKing()
 	{
-//		GPoint kCoor = new GPoint(CB.blackKing.getx(), CB.blackKing.gety());
 		if(!CB.blackKing.notCheckR(blackKingCoor))
 		{
 			System.out.print("check");
@@ -195,52 +198,52 @@ public class FeatureCalculation
 	{
 		double numOfPosSquares = 0;	
 		
-		GPoint blackKingCoor2;
+		GPoint blackKingCoor2 = new GPoint();
 		boolean legalMove;
 		
-		blackKingCoor2 = new GPoint(CB.blackKing.getx()-1, CB.blackKing.gety()-1);
+		blackKingCoor2.setLocation(CB.blackKing.getx()-1, CB.blackKing.gety()-1);
 		if(CB.blackKing.checkIfLegalMovek(blackKingCoor2))
 		{
 			numOfPosSquares++;
 		}
 		
-		blackKingCoor2 = new GPoint(CB.blackKing.getx(), CB.blackKing.gety()-1);
+		blackKingCoor2.setLocation(CB.blackKing.getx(), CB.blackKing.gety()-1);
 		if(CB.blackKing.checkIfLegalMovek(blackKingCoor2))
 		{
 			numOfPosSquares++;
 		}
 		
-		blackKingCoor2 = new GPoint(CB.blackKing.getx()-1, CB.blackKing.gety());
+		blackKingCoor2.setLocation(CB.blackKing.getx()-1, CB.blackKing.gety());
 		if(CB.blackKing.checkIfLegalMovek(blackKingCoor2))
 		{
 			numOfPosSquares++;
 		}
 		
-		blackKingCoor2 = new GPoint(CB.blackKing.getx()+1, CB.blackKing.gety()+1);
+		blackKingCoor2.setLocation(CB.blackKing.getx()+1, CB.blackKing.gety()+1);
 		if(CB.blackKing.checkIfLegalMovek(blackKingCoor2))
 		{
 			numOfPosSquares++;
 		}
 		
-		blackKingCoor2 = new GPoint(CB.blackKing.getx()+1, CB.blackKing.gety()-1);
+		blackKingCoor2.setLocation(CB.blackKing.getx()+1, CB.blackKing.gety()-1);
 		if(CB.blackKing.checkIfLegalMovek(blackKingCoor2))
 		{
 			numOfPosSquares++;
 		}
 		
-		blackKingCoor2 = new GPoint(CB.blackKing.getx()-1, CB.blackKing.gety()+1);
+		blackKingCoor2.setLocation(CB.blackKing.getx()-1, CB.blackKing.gety()+1);
 		if(CB.blackKing.checkIfLegalMovek(blackKingCoor2))
 		{
 			numOfPosSquares++;
 		}
 		
-		blackKingCoor2 = new GPoint(CB.blackKing.getx(), CB.blackKing.gety()+1);
+		blackKingCoor2.setLocation(CB.blackKing.getx(), CB.blackKing.gety()+1);
 		if(CB.blackKing.checkIfLegalMovek(blackKingCoor2))
 		{
 			numOfPosSquares++;
 		}
 		
-		blackKingCoor2 = new GPoint(CB.blackKing.getx()+1, CB.blackKing.gety());
+		blackKingCoor2.setLocation(CB.blackKing.getx()+1, CB.blackKing.gety());
 		if(CB.blackKing.checkIfLegalMovek(blackKingCoor2))
 		{
 			numOfPosSquares++;

@@ -3,7 +3,10 @@
  * -------------------
  * Name: Daniel Staal
  * 
- * In this file the chessBoard is described
+ * Main Components
+ * - 
+ * -
+ * -
  */
 
 import acm.graphics.*;

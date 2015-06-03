@@ -3,7 +3,12 @@
  * -------------------
  * Name: Daniel Staal
  * 
- * This file will eventually implement the game of Chess.
+ * Main Components
+ *	- Calculating the evaluation function
+ *	- Find the best next state among a given set of states
+ *	- Add all the feature values to an multi-D array to later use in the  updatefunction
+ *	- Add the total reward to an array to later use in the updatefunction
+ * 
  */
 
 import acm.graphics.*;
@@ -53,6 +58,12 @@ public class RewardFunction extends ConsoleProgram
 		createFeatureNameArrayList();
 	}
 	
+	/*
+	- retrieve all possible next boardposition after a white move
+	- find the next state with the highest reward
+	- set the piece to the new positions
+	- set the chessboard
+	*/
 	public void findBestMove()
 	{
 		ArrayList<BoardPosition> allPosNextMoves;
@@ -67,10 +78,16 @@ public class RewardFunction extends ConsoleProgram
 		chessBoard.whiteKing.sety((int)bestMove.getK().getY());
 		chessBoard.rook.setx((int)bestMove.getR().getX());
 		chessBoard.rook.sety((int)bestMove.getR().getY());
+		
 		chessBoard.fillEmptyChessboard();
 		chessBoard.addKRKtoChessboard();
 	}
 	
+	/*
+	- find the highest reward given an arraylist of boardpositions
+	- add values of features and the state to arraylists
+	- return the best next boardposition
+	*/
 	public BoardPosition findHighestReward(ArrayList<BoardPosition> allPosNextMoves)
 	{
 		// this is just a low value to be lower than any possible reward
@@ -111,7 +128,7 @@ public class RewardFunction extends ConsoleProgram
 		//String f4 = "kingProtectsRook";
 		String f5 = "threatenedRook";
 		//String f6 = "rookLost";
-		String f7 = "kingsInOpposition";
+		//String f7 = "kingsInOpposition";
 		
 		featureNames.add(f0);
 		featureNames.add(f1);
@@ -120,9 +137,13 @@ public class RewardFunction extends ConsoleProgram
 		//featureNames.add(f4);
 		featureNames.add(f5);
 		//featureNames.add(f6);
-		featureNames.add(f7);
+		//featureNames.add(f7);
 	}
-		
+	
+	/*
+	- calculate the value of the evaluation function given a boardposition
+	- return this reward and the featurevalues in that boardposition
+	*/	
 	public double[] calcReward(BoardPosition pos)
 	{	
 		Chessboard thisBoard = new Chessboard(pos);
@@ -142,12 +163,12 @@ public class RewardFunction extends ConsoleProgram
 		//double featureValue4 = thisFC.kingProtectsRook();
 		double featureValue5 = thisFC.threatenedRook();
 		//double featureValue6 = thisFC.rookLost();
-		double featureValue7 = thisFC.kingsInOpposition();
+		//double featureValue7 = thisFC.kingsInOpposition();
 		
 		//System.out.println(featureValue7);
 				
 				
-		double[] rewardAndFeatureValues = {0.0, featureValue0, featureValue1,featureValue2,featureValue3,featureValue5, featureValue7};//, featureValue6};//, featureValue5};
+		double[] rewardAndFeatureValues = {0.0, featureValue0, featureValue1,featureValue2,featureValue3,featureValue5};//, featureValue7};//, featureValue6};//, featureValue5};
 			
 		double evaluation;
 				

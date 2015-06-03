@@ -44,7 +44,7 @@ public class Main extends ConsoleProgram
 	private boolean randomPositions = true;
 	
 	/* use earlier calculated parameter vector testData */
-	private boolean useTestData = false;
+	private boolean useTestData = true;
 	
 	/* do you want to save the updated weights and overwrite the last ones? */
 	private boolean savingWeights = true;	
@@ -53,13 +53,13 @@ public class Main extends ConsoleProgram
 	private boolean testing = false;
 	
 	/* number of games to be played by the agents */
-	private double numberOfGames = 1500;
+	private double numberOfGames = 1;
 	
 	/* max number of moves */
 	private int maxNumberOfMoves = 20;
 	
 	/* number of features used in the parameter vector*/
-	private int numberOfFeatures = 6;
+	private int numberOfFeatures = 5;
 	
 	/* number of games per which terminal states are written */
 	private int writePlotPerNumber = 50;
@@ -69,8 +69,8 @@ public class Main extends ConsoleProgram
 	
 	/* initial position */
 	static private GPoint blackKing = new GPoint(0,0);
-	static private GPoint whiteKing = new GPoint(0,2);
-	static private GPoint rook = new GPoint(2,2);
+	static private GPoint whiteKing = new GPoint(1,2);
+	static private GPoint rook = new GPoint(1,3);
 	
 	/* terminal state rewards */
 	private double checkMateReward = 2.0;

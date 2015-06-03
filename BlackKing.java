@@ -1,9 +1,10 @@
 /*
- * File: Chessboard.java
+ * File: BlackKing.java
  * -------------------
  * Name: Daniel Staal
  * 
- * In this file the chessBoard is described
+ * Main Components
+ * - make a random move with the black king
  */
 
 import acm.graphics.*;
@@ -118,7 +119,7 @@ public class BlackKing extends Piece
 	public boolean kingNotInCheck(GPoint kCoor)
 	{
 		boolean K = notCheckK(kCoor);
-		boolean R = notCheckR(kCoor);
+		boolean R = notCheckR();
 		
 		if(K && R)
 		{
@@ -140,13 +141,16 @@ public class BlackKing extends Piece
 	// k doesnt make a move so R attacks it
 	
 	//TODO: check if this works
-	public boolean notCheckR(GPoint kCoor)
+	public boolean notCheckR()
 	{
-		// to check if rook is supported by white king
-		GPoint RCoor = new GPoint(CB.rook.getx(), CB.rook.gety());
+		GPoint RCoor = CB.thisPosition.getR();
+		GPoint kCoor = CB.thisPosition.getk();
 		
+		// if row or column is the same
 		if(kCoor.getX() == CB.rook.getx() || kCoor.getY() == CB.rook.gety())
 		{
+			
+		
 			// king takes rook if not protected
 			if(kCoor.getX() == CB.rook.getx() && kCoor.getY() == CB.rook.gety() && notCheckK(RCoor))
 			{
