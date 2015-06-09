@@ -24,6 +24,8 @@ public class Piece extends ConsoleProgram
 {
 	private int x;
 	private int y;
+	
+	private GPoint coordinates;
 
 	public Extra extra = new Extra();
 
@@ -35,6 +37,8 @@ public class Piece extends ConsoleProgram
 		y = (int)coor.getY();	
 		
 		CB = board;
+		
+		coordinates = new GPoint(x, y);
 	}
 	
 	public Piece()
@@ -70,10 +74,16 @@ public class Piece extends ConsoleProgram
 	public void setx(int newx)
 	{
 		x = newx;
+		coordinates.setLocation(x, y);
 	}
 	public void sety(int newy)
 	{
 		y = newy;
+		coordinates.setLocation(x, y);
+	}
+	public GPoint getCoordinates()
+	{
+		return coordinates;
 	}
 }
 

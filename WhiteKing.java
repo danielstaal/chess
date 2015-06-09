@@ -1,11 +1,11 @@
 /*
- * File: Chessboard.java
+ * File: WhiteKing.java
  * -------------------
  * Name: Daniel Staal
  * 
  * Main Components
- * - 
- * -
+ * - making random move with the white king
+ * - Retrieving all possible next positions after a move with the white king
  * -
  */
 
@@ -47,7 +47,11 @@ public class WhiteKing extends Piece
 		return true;		
 	}
 
-	// to move white King
+	/*
+	- create an arraylist of all possible next states after a move with the white king 
+	- if a move is not legal don't put it in the array
+	- return the possible next boardpositions
+	*/
 	public ArrayList<BoardPosition> posMovesK()
 	{
 		ArrayList<BoardPosition> posMovesK = new ArrayList<BoardPosition>();
@@ -89,12 +93,18 @@ public class WhiteKing extends Piece
         return posMovesK;
 	}
 	
+	// a move is legal if:
+	//	- the king is not in check
+	//	- the king is on the chessboard
+	//	- there is not other piece on this square
 	private boolean checkIfLegalMoveK(GPoint KCoor)
 	{
-		boolean check = KingNotInCheck(KCoor);
-		boolean on = onChessBoard(KCoor);
+		boolean notCheck = KingNotInCheck(KCoor);
+		// these two methods are in the parent class: Piece.java
+		boolean onChessBoard = onChessBoard(KCoor);
 		boolean noOtherPiece = noOtherPiece(KCoor);
-		if(check && on && noOtherPiece)
+		
+		if(notCheck && onChessBoard && noOtherPiece)
 		{	
 			return true;
 		}
@@ -103,7 +113,7 @@ public class WhiteKing extends Piece
 	
 	private boolean KingNotInCheck(GPoint KCoor)
 	{
-		boolean K = notCheckk(KCoor);
+		boolean K = notCheckBlackKing(KCoor);
 		if(K)
 		{
 			return true;
@@ -111,7 +121,7 @@ public class WhiteKing extends Piece
 		return false;
 	}
 	
-	public boolean notCheckk(GPoint KCoor)
+	public boolean notCheckBlackKing(GPoint KCoor)
 	{
 		if((KCoor.getX() >= CB.blackKing.getx()-1 && KCoor.getX() <= CB.blackKing.getx() + 1) && (KCoor.getY() >= CB.blackKing.gety()-1 && KCoor.getY() <= CB.blackKing.gety() + 1))
 		{

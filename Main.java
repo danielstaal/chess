@@ -53,33 +53,34 @@ public class Main extends ConsoleProgram
 	private boolean testing = false;
 	
 	/* number of games to be played by the agents */
-	private double numberOfGames = 1;
+	private double numberOfGames = 700;
 	
 	/* max number of moves */
 	private int maxNumberOfMoves = 20;
 	
 	/* number of features used in the parameter vector*/
-	private int numberOfFeatures = 5;
+	private int numberOfFeatures = 6;
 	
 	/* number of games per which terminal states are written */
-	private int writePlotPerNumber = 50;
+	private int writePlotPerNumber = 100;
 	
 	/* do you want a simple plot? */
 	private boolean plotting = true;
 	
 	/* initial position */
 	static private GPoint blackKing = new GPoint(0,0);
-	static private GPoint whiteKing = new GPoint(1,2);
-	static private GPoint rook = new GPoint(1,3);
+	static private GPoint whiteKing = new GPoint(0,2);
+	static private GPoint rook = new GPoint(3,3);
 	
 	/* terminal state rewards */
 	private double checkMateReward = 2.0;
 	private double staleMateReward = 2.0;
 	private double remisReward = -2.0;
 	
+	private boolean alwaysTakingRookFlag = false;
 	
 /////////////////////////////////////////////////////////////////////////
-// Do NOT change these Public variables
+// Do NOT change these variables
 /////////////////////////////////////////////////////////////////////////
 
 	/* initial BoardPosition */
@@ -91,16 +92,16 @@ public class Main extends ConsoleProgram
 	private ArrayList<Integer> posSquaresk;
 	
 	/* Starting parametervector and feature values */
-	static ArrayList<Double> parVector = new ArrayList<Double>(); 
+	private static ArrayList<Double> parVector = new ArrayList<Double>(); 
 	
 	/* initiate agent */
-	Agent agent = new Agent(chessBoard, parVector, randomMoves);
+	private Agent agent = new Agent(chessBoard, parVector, randomMoves);
 	
 	/* initiate Testing object */
-	Tester tester = new Tester(chessBoard, agent, initPos);
+	private Tester tester = new Tester(chessBoard, agent, initPos);
 	
 	/* File writer */
-	WriteToFile fileWriter = new WriteToFile(parVector);
+	private WriteToFile fileWriter = new WriteToFile(parVector);
 	
 	/* did the game reach a terminal state */
 	private boolean result = true;	
@@ -115,7 +116,7 @@ public class Main extends ConsoleProgram
 	private double mean = 0.0; 
 	
 	/* to plot a graph */ 
-	Plotter plotter = new Plotter(numberOfGames, writePlotPerNumber);
+	private Plotter plotter = new Plotter(numberOfGames, writePlotPerNumber);
 
 	
 /////////////////////////////////////////////////////////////////////////
@@ -129,23 +130,33 @@ public class Main extends ConsoleProgram
 	
 	public void run()
 	{
+		// start timer
 		long startTime = System.nanoTime();
 		
+		// to set whether black king should alwaysTakingRook if possible
+		chessBoard.blackKing.setAlwaysTakingRook(alwaysTakingRookFlag);
+		
+		// initiate weight vector
 		agent.update.initiateParVector(numberOfFeatures);
 		
+		// read in weights if requested
 		if(useTestData)
 		{
 			fileWriter.readFile();
 		}
 
+		// play the games
 		playGamesLearnOnData();
 		
+		// print the result
 		printResult();
 		
+		// print timer
 		long endTime = System.nanoTime();
 		long duration = (endTime - startTime)/1000000000;
 		print("Time:");print(duration);print("seconds");
 		
+		// plot values if requested
 		if(plotting){plotter.plotValues();}
 	}
 	

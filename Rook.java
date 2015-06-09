@@ -4,8 +4,8 @@
  * Name: Daniel Staal
  * 
  * Main Components
- * - 
- * -
+ * - make random move with the rook
+ * - retrieve all possible next positions after a move with the white rook
  * -
  */
 
@@ -28,19 +28,6 @@ public class Rook extends Piece
 		super(coor, board);
 	}
 	
-	public void setRookAlive(boolean flag)
-	{
-		rookAlive = flag;
-	} 
-	public boolean getRookAlive()
-	{
-		return rookAlive;
-	} 
-	
-
-/////////////////////////////////////////////////////////////////////
-//  Moving the rook
-/////////////////////////////////////////////////////////////////////
 	public boolean randomMoveR()
 	{
 		ArrayList<BoardPosition> posMovesR = posMovesR();
@@ -135,8 +122,8 @@ public class Rook extends Piece
 	{
 		BoardPosition boardPos;
 			
-		GPoint kCoor = new GPoint(CB.blackKing.getx(), CB.blackKing.gety());
-		GPoint KCoor = new GPoint(CB.whiteKing.getx(), CB.whiteKing.gety());
+		GPoint kCoor = CB.blackKing.getCoordinates();
+		GPoint KCoor = CB.whiteKing.getCoordinates();
 		
 		boolean legalMove = checkIfLegalMoveR(RCoor);
 		if(legalMove)
@@ -151,12 +138,21 @@ public class Rook extends Piece
 	{
 		boolean on = onChessBoard(RCoor);
 		boolean noOtherPiece = noOtherPiece(RCoor);
-		//boolean notThroughPiece = notThroughPiece(RCoor);
+
 		if(on && noOtherPiece)
 		{
 			return true;
 		}
 		return false;
+	}
+	
+	public void setRookAlive(boolean flag)
+	{
+		rookAlive = flag;
+	} 
+	public boolean getRookAlive()
+	{
+		return rookAlive;
 	}
 }
 

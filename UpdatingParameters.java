@@ -26,6 +26,9 @@ public class UpdatingParameters extends ConsoleProgram
 	private static final double lambda = 0.7;
 	private static final double learningRate = 0.7;
 	
+	/* initiate weights with this double */
+	private static final double startingParValue = 0.5;
+	
 	private ArrayList<Double> parVector;
 	private ArrayList<BoardPosition> pastStates;
 	private RewardFunction rewardFunction;
@@ -41,7 +44,7 @@ public class UpdatingParameters extends ConsoleProgram
 	{
 		for(int i=0;i<numOfFeatures;i++)
 		{	
-			parVector.add(0.5);
+			parVector.add(startingParValue);
 			// to keep track of all calculated feature values	
 			rewardFunction.featureValues.add(new ArrayList<Double>());
 		}		

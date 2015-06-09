@@ -8,8 +8,8 @@
  * 		- everything that has to to with the agent is described here
  *
  * Main Components:
- *		-
- *		-
+ *		- all classes needed for learning and making moves are initiated here
+ *		- control chamber of the agent. Make a random or a move based on the evaluation function
  *		-
  */
 
@@ -73,11 +73,12 @@ public class Agent
 	// NOTE: is te veranderen in random uit allPosNextStates.findAllPosNextStates
 	private void randomWhiteMove()
 	{
-		// choose random piece
+		// picking random 0 or 1
 		int rand = extra.randInt(0,1);
+		// presetting legalmove to false
 		boolean legalMove = false;
 		
-		// maybe not most efficient with while loop
+		// random number whether moving with the rook or with the white king
 		while(!legalMove)
 		{
 			if(rand == 0)

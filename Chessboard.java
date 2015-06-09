@@ -23,6 +23,8 @@ import java.io.*;
 
 public class Chessboard extends ConsoleProgram
 {
+	/* Size of Chessboard*/
+	private int size = 4;
 
 	/* the chessboard array */
 	private char[][] CBarray;
@@ -32,13 +34,11 @@ public class Chessboard extends ConsoleProgram
 	/* Stalemate */
 	private boolean staleMate = false;
 	
-	/* Size of Chessboard*/
-	private int size = 4;
 	
 	/* Pieces */
-	BlackKing blackKing;
-	WhiteKing whiteKing;
-	Rook rook;	
+	public BlackKing blackKing;
+	public WhiteKing whiteKing;
+	public Rook rook;	
 	
 	/* BoardPosition */
 	public BoardPosition thisPosition;	
@@ -60,8 +60,27 @@ public class Chessboard extends ConsoleProgram
 		
 		thisPosition = boardPos;
 	}
+	
 	public Chessboard()
 	{
+	}
+	
+	public void setBoardPosition(BoardPosition boardPos)
+	{
+		CBarray = new char[size][size];
+
+		blackKing = new BlackKing(boardPos.getk(), this);
+		whiteKing = new WhiteKing(boardPos.getK(), this);					
+		rook = new Rook(boardPos.getR(), this);
+
+		fillEmptyChessboard();
+		addKRKtoChessboard();
+		
+		thisPosition = boardPos;
+		
+		staleMate = false;
+		checkMate = false;
+		rook.setRookAlive(true);
 	}
 
 /////////////////////////////////////////////////////////////////////////
@@ -200,6 +219,23 @@ public class Chessboard extends ConsoleProgram
 		staleMate = false;
 		checkMate = false;
 		rook.setRookAlive(true);
+	}
+	
+	public void printBoard()
+	{
+	// printing
+		System.out.print("After move");
+		System.out.println();
+				
+		for(int j=0; j<getCBSize(); j++)
+		{
+			for(int k=0; k<getCBSize(); k++)
+			{
+				System.out.print(getCBarray()[k][j]);
+				System.out.print(" ");
+			}
+			System.out.println();
+		}
 	}
 }
 

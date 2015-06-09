@@ -26,19 +26,51 @@ public class FeatureCalculation
 //	- Below is a list of methods to calculate all different features available
 /////////////////////////////////////////////////////////////////////////
 	
-	private Chessboard CB;
+	private Chessboard thisBoard = new Chessboard();
 	private GPoint whiteKingCoor;
 	private GPoint blackKingCoor;
 	private GPoint rookCoor;
+
 	
 	public FeatureCalculation(Chessboard board)
 	{
-		CB = board;
-		whiteKingCoor = CB.thisPosition.getK();
-		blackKingCoor = CB.thisPosition.getk();
-		rookCoor = CB.thisPosition.getR();
+		thisBoard = board;
+		whiteKingCoor = thisBoard.whiteKing.getCoordinates();
+		blackKingCoor = thisBoard.blackKing.getCoordinates();
+		rookCoor = thisBoard.rook.getCoordinates();
 	}
 	
+	public FeatureCalculation()
+	{
+	}
+	
+	public void setBoard(BoardPosition pos)
+	{
+		thisBoard.setBoardPosition(pos);
+		whiteKingCoor = thisBoard.whiteKing.getCoordinates();
+		blackKingCoor = thisBoard.blackKing.getCoordinates();
+		rookCoor = thisBoard.rook.getCoordinates();	
+	}
+	
+
+	public double blackKingInStaleMate()
+	{
+		if(thisBoard.getStaleMate())
+		{
+			return 1.0;
+		}
+		return 0.0;
+	}
+	
+	public double blackKingInCheckMate()
+	{
+		if(thisBoard.getCheckMate())
+		{
+			return 1.0;
+		}
+		return 0.0;
+	}
+
 	/*
 	- kings are two squares horizontal of vertical apart
 	*/
@@ -55,11 +87,11 @@ public class FeatureCalculation
 	// check if rook is still alive
 	public double rookLost()
 	{
-		if(CB.rook.getx() == CB.blackKing.getx() && CB.rook.gety() == CB.blackKing.gety())
+		if(thisBoard.rook.getRookAlive())
 		{
-			return 1.0;
+			return 0.0;
 		}
-		return 0.0;
+		return 1.0;
 	}
 	
 	// what is the size of the 'fence' that the rooks makes around the black king
@@ -67,13 +99,13 @@ public class FeatureCalculation
 	{
 		double squares = 0.0;
 		
-		int rookx = CB.rook.getx();
-		int rooky = CB.rook.gety();
-		int size = CB.getCBSize() - 1;
+		int rookx = thisBoard.rook.getx();
+		int rooky = thisBoard.rook.gety();
+		int size = thisBoard.getCBSize() - 1;
 		
-		if(CB.rook.getx() > CB.blackKing.getx())
+		if(thisBoard.rook.getx() > thisBoard.blackKing.getx())
 		{
-			if(CB.rook.gety() > CB.blackKing.gety())
+			if(thisBoard.rook.gety() > thisBoard.blackKing.gety())
 			{
 				// down right
 				squares = rookx * rooky;
@@ -86,7 +118,7 @@ public class FeatureCalculation
 		}
 		else
 		{
-			if(CB.rook.gety() > CB.blackKing.gety())
+			if(thisBoard.rook.gety() > thisBoard.blackKing.gety())
 			{
 				// down left
 				squares = (size - rookx) * (rooky);
@@ -151,17 +183,17 @@ public class FeatureCalculation
 	
 	public double distanceBetweenWhiteRookAndBlackKing()
 	{
-		double xDistance = Math.abs(CB.rook.getx() - CB.blackKing.getx());
-		double yDistance = Math.abs(CB.rook.gety() - CB.blackKing.gety());
+		double xDistance = Math.abs(thisBoard.rook.getx() - thisBoard.blackKing.getx());
+		double yDistance = Math.abs(thisBoard.rook.gety() - thisBoard.blackKing.gety());
 		
 		double totalDis = xDistance + yDistance;
 		
-		return normaliseFeature(totalDis, (CB.getCBSize()-1)*(CB.getCBSize()-1));
+		return normaliseFeature(totalDis, (thisBoard.getCBSize()-1)*(thisBoard.getCBSize()-1));
 	}
 	
 	public double rookChecksBlackKing()
 	{
-		if(!CB.blackKing.notCheckR(blackKingCoor))
+		if(!thisBoard.blackKing.notCheckR(blackKingCoor))
 		{
 			System.out.print("check");
 			return 1;
@@ -174,9 +206,9 @@ public class FeatureCalculation
 	{
 		double distance = 8;
 		
-		int size = CB.getCBSize();
-		int x = CB.blackKing.getx();
-		int y = CB.blackKing.gety();
+		int size = thisBoard.getCBSize();
+		int x = thisBoard.blackKing.getx();
+		int y = thisBoard.blackKing.gety();
 		
 		int left = x;
 		int right = size - x; 
@@ -190,7 +222,7 @@ public class FeatureCalculation
 		
 		//System.out.print(distance);
 		
-		return normaliseFeature(distance, CB.getCBSize()-1);
+		return normaliseFeature(distance, thisBoard.getCBSize()-1);
 	}
 	
 	// FEATURE: num of pos squares k
@@ -201,50 +233,50 @@ public class FeatureCalculation
 		GPoint blackKingCoor2 = new GPoint();
 		boolean legalMove;
 		
-		blackKingCoor2.setLocation(CB.blackKing.getx()-1, CB.blackKing.gety()-1);
-		if(CB.blackKing.checkIfLegalMovek(blackKingCoor2))
+		blackKingCoor2.setLocation(thisBoard.blackKing.getx()-1, thisBoard.blackKing.gety()-1);
+		if(thisBoard.blackKing.checkIfLegalMovek(blackKingCoor2))
 		{
 			numOfPosSquares++;
 		}
 		
-		blackKingCoor2.setLocation(CB.blackKing.getx(), CB.blackKing.gety()-1);
-		if(CB.blackKing.checkIfLegalMovek(blackKingCoor2))
+		blackKingCoor2.setLocation(thisBoard.blackKing.getx(), thisBoard.blackKing.gety()-1);
+		if(thisBoard.blackKing.checkIfLegalMovek(blackKingCoor2))
 		{
 			numOfPosSquares++;
 		}
 		
-		blackKingCoor2.setLocation(CB.blackKing.getx()-1, CB.blackKing.gety());
-		if(CB.blackKing.checkIfLegalMovek(blackKingCoor2))
+		blackKingCoor2.setLocation(thisBoard.blackKing.getx()-1, thisBoard.blackKing.gety());
+		if(thisBoard.blackKing.checkIfLegalMovek(blackKingCoor2))
 		{
 			numOfPosSquares++;
 		}
 		
-		blackKingCoor2.setLocation(CB.blackKing.getx()+1, CB.blackKing.gety()+1);
-		if(CB.blackKing.checkIfLegalMovek(blackKingCoor2))
+		blackKingCoor2.setLocation(thisBoard.blackKing.getx()+1, thisBoard.blackKing.gety()+1);
+		if(thisBoard.blackKing.checkIfLegalMovek(blackKingCoor2))
 		{
 			numOfPosSquares++;
 		}
 		
-		blackKingCoor2.setLocation(CB.blackKing.getx()+1, CB.blackKing.gety()-1);
-		if(CB.blackKing.checkIfLegalMovek(blackKingCoor2))
+		blackKingCoor2.setLocation(thisBoard.blackKing.getx()+1, thisBoard.blackKing.gety()-1);
+		if(thisBoard.blackKing.checkIfLegalMovek(blackKingCoor2))
 		{
 			numOfPosSquares++;
 		}
 		
-		blackKingCoor2.setLocation(CB.blackKing.getx()-1, CB.blackKing.gety()+1);
-		if(CB.blackKing.checkIfLegalMovek(blackKingCoor2))
+		blackKingCoor2.setLocation(thisBoard.blackKing.getx()-1, thisBoard.blackKing.gety()+1);
+		if(thisBoard.blackKing.checkIfLegalMovek(blackKingCoor2))
 		{
 			numOfPosSquares++;
 		}
 		
-		blackKingCoor2.setLocation(CB.blackKing.getx(), CB.blackKing.gety()+1);
-		if(CB.blackKing.checkIfLegalMovek(blackKingCoor2))
+		blackKingCoor2.setLocation(thisBoard.blackKing.getx(), thisBoard.blackKing.gety()+1);
+		if(thisBoard.blackKing.checkIfLegalMovek(blackKingCoor2))
 		{
 			numOfPosSquares++;
 		}
 		
-		blackKingCoor2.setLocation(CB.blackKing.getx()+1, CB.blackKing.gety());
-		if(CB.blackKing.checkIfLegalMovek(blackKingCoor2))
+		blackKingCoor2.setLocation(thisBoard.blackKing.getx()+1, thisBoard.blackKing.gety());
+		if(thisBoard.blackKing.checkIfLegalMovek(blackKingCoor2))
 		{
 			numOfPosSquares++;
 		}

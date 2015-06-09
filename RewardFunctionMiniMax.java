@@ -1,5 +1,5 @@
 /*
- * File: RewardFunction.java
+ * File: RewardFunctionMiniMax.java
  * -------------------
  * Name: Daniel Staal
  * 
@@ -20,7 +20,7 @@ import java.awt.event.*;
 import java.util.*;
 import java.io.*;
 
-public class RewardFunction extends ConsoleProgram
+public class RewardFunctionMiniMax extends ConsoleProgram
 {
 
 /////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ public class RewardFunction extends ConsoleProgram
 	/* reference reward - exploration/exploitation */
 	private ReferenceReward refReward = new ReferenceReward();
 	
-	public RewardFunction(AllNextStates aPNS, Chessboard board, ArrayList<Double> pV, ArrayList<Double> sV)
+	public RewardFunctionMiniMax(AllNextStates aPNS, Chessboard board, ArrayList<Double> pV, ArrayList<Double> sV)
 	{
 		allPosNextStates = aPNS;
 		chessBoard = board;
@@ -105,12 +105,7 @@ public class RewardFunction extends ConsoleProgram
 				bestBoardPosition = allPosNextMoves.get(i);
 			}
 		}
-		
-//		if(refReward.checkExploitation(reward))
-//		{
-//			
-//		}
-		
+
 		// add the reward to the arraylist of rewards of past states
 		stateValues.add(reward);
 		addFeatureValues(thisRewardAndFeatureValues);
@@ -125,24 +120,23 @@ public class RewardFunction extends ConsoleProgram
 		String f1 = "noOfPosSquaresk";
 		String f2 = "distanceToEdgeBlackKing";
 		String f3 = "distanceBetweenWhiteRookAndBlackKing";
-		String f4 = "kingProtectsRook";
+		//String f4 = "kingProtectsRook";
 		String f5 = "threatenedRook";
-		String f6 = "rookLost";
-		String f7 = "kingsInOpposition";
-		String f8 = "blackKingInStaleMate";
-		String f9 = "blackKingInCheckMate";
+		//String f6 = "rookLost";
+		//String f7 = "kingsInOpposition";
+		//String f8 = "blackKingInStaleMate";
+		//String f9 = "blackKingInCheckMate";
 		
-		//featureNames.add(f0);
-		//featureNames.add(f1);
+		featureNames.add(f0);
+		featureNames.add(f1);
 		featureNames.add(f2);		
-		//featureNames.add(f3);
+		featureNames.add(f3);
 		//featureNames.add(f4);
 		featureNames.add(f5);
-		featureNames.add(f6);
-		featureNames.add(f7);
-		featureNames.add(f8);
-		featureNames.add(f9);
-
+		//featureNames.add(f6);
+		//featureNames.add(f7);
+		//featureNames.add(f8);
+		//featureNames.add(f9);
 	}
 	
 	/*
@@ -152,42 +146,70 @@ public class RewardFunction extends ConsoleProgram
 	public double[] calcReward(BoardPosition pos)
 	{	
 		Chessboard thisBoard = new Chessboard(pos);
-				
-		//thisBoard.printBoard();		
-				
-		// make a (virtual) random move with the black king
-		thisBoard.blackKing.randomMovek();
-		
-		//thisBoard.printBoard();
-		
-		FeatureCalculation thisFC = new FeatureCalculation(thisBoard);
-		
-		///////////////// Feature rewards:
 
-		//double featureValue0 = thisFC.squaresOfKingvsRook();
-		//double featureValue1 = thisFC.noOfPosSquaresk();
-		double featureValue2 = thisFC.distanceToEdgeBlackKing();
-		//double featureValue3 = thisFC.distanceBetweenWhiteRookAndBlackKing();
-		//double featureValue4 = thisFC.kingProtectsRook();
-		double featureValue5 = thisFC.threatenedRook();
-		double featureValue6 = thisFC.rookLost();
-		double featureValue7 = thisFC.kingsInOpposition();
-		double featureValue8 = thisFC.blackKingInStaleMate();
-		double featureValue9 = thisFC.blackKingInCheckMate();
-				
-				
-		double[] rewardAndFeatureValues = {0.0, featureValue2, featureValue5, featureValue6,featureValue7,featureValue8,featureValue9};//, featureValue8, featureValue9};//, featureValue5};
-			
-		double evaluation;
-				
-		for(int i=0;i<parVector.size();i++)
-		{
-			evaluation = parVector.get(i) * rewardAndFeatureValues[i+1];	
-
-			rewardAndFeatureValues[0] += evaluation;
-		}
-		return rewardAndFeatureValues;
+		// findall possible moves for black king and take the worst move for white
+		ArrayList<BoardPosition> posMovesk = thisBoard.blackKing.posMovesk();
+		
+		return lowestReward(posMovesk);
+		
 	}
+		
+	// find the state with the lowest reward after all possible black moves
+	private double[] lowestReward(ArrayList<BoardPosition> posMovesk)
+	{
+		FeatureCalculation thisFC = new FeatureCalculation();
+		
+		// set starting value very high number
+		double totalEvaluation = 100000000;
+		double featureEvaluation;
+		
+		// this array will be returned with the lowest reward and the featurevalues
+		// for this state
+		double[] lowestReward = new double[featureNames.size()+1];		
+				
+		for(int i=0;i<posMovesk.size();i++)
+		{
+			// set the virtual board to every possible state
+			thisFC.setBoard(posMovesk.get(i));			
+			
+			///////////////// calculate Feature values:
+
+			double featureValue0 = thisFC.squaresOfKingvsRook();
+			double featureValue1 = thisFC.noOfPosSquaresk();
+			double featureValue2 = thisFC.distanceToEdgeBlackKing();
+			double featureValue3 = thisFC.distanceBetweenWhiteRookAndBlackKing();
+			//double featureValue4 = thisFC.kingProtectsRook();
+			double featureValue5 = thisFC.threatenedRook();
+			//double featureValue6 = thisFC.rookLost();
+			//double featureValue7 = thisFC.kingsInOpposition();
+			//double featureValue8 = thisFC.blackKingInStaleMate();
+			//double featureValue9 = thisFC.blackKingInCheckMate();
+		
+			//System.out.println(featureValue8);
+				
+				
+			double[] rewardAndFeatureValues = {0.0, featureValue1, featureValue2,  featureValue3,featureValue0, featureValue5};//, featureValue9};
+				
+			// calculate the total evaluation value	
+			for(int j=0;j<parVector.size();j++)
+			{
+				featureEvaluation = parVector.get(j) * rewardAndFeatureValues[j+1];	
+
+				rewardAndFeatureValues[0] += featureEvaluation;
+			}
+			
+			// if the evaluation value is lower than what is found until this
+			// moment, change it to this value
+			if(rewardAndFeatureValues[0] < totalEvaluation)
+			{
+				totalEvaluation = rewardAndFeatureValues[0];
+				lowestReward = rewardAndFeatureValues;
+			}	
+		}
+		return lowestReward;
+	}
+	
+	
 	
 	public void addFeatureValues(double[] rewardAndFeatureValues)
 	{
@@ -195,7 +217,8 @@ public class RewardFunction extends ConsoleProgram
 		{
 			featureValues.get(i).add(rewardAndFeatureValues[i+1]);
 		}
-		//System.out.print(rewardAndFeatureValues[5]);
+		
+		//System.out.println(rewardAndFeatureValues[3]);
 	}
 	
 	public void clearFeatureValues()
@@ -208,4 +231,8 @@ public class RewardFunction extends ConsoleProgram
 
 	
 }
+
+
+
+
 

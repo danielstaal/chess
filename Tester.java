@@ -93,7 +93,7 @@ public class Tester extends ConsoleProgram
 		
 		agent.rewardFunction.addFeatureValues(rewardAndFeatureValues);
 		
-		//System.out.println(reward);
+		System.out.println(rewardAndFeatureValues[2]);
 	}
 	
 	private void learnOnData()
@@ -123,7 +123,7 @@ public class Tester extends ConsoleProgram
 		// black move
 		kCoor = new GPoint(0,0);
 		KCoor = new GPoint(0,2);
-		RCoor = new GPoint(3,1);
+		RCoor = new GPoint(0,0);
 		BoardPosition pos4 = new BoardPosition(kCoor, KCoor, RCoor);
 		// white move
 		kCoor = new GPoint(0,0);
