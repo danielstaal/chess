@@ -81,6 +81,8 @@ public class RewardFunction extends ConsoleProgram
 		
 		chessBoard.fillEmptyChessboard();
 		chessBoard.addKRKtoChessboard();
+		
+		//chessBoard.printBoard();
 	}
 	
 	/*
@@ -90,6 +92,8 @@ public class RewardFunction extends ConsoleProgram
 	*/
 	public BoardPosition findHighestReward(ArrayList<BoardPosition> allPosNextMoves)
 	{
+		Chessboard thisBoard = new Chessboard();
+		
 		// this is just a low value to be lower than any possible reward
 		double reward = -1000000.0;
 		double[] thisRewardAndFeatureValues = null;
@@ -97,7 +101,7 @@ public class RewardFunction extends ConsoleProgram
 		
 		for(int i=0;i<allPosNextMoves.size();i++)
 		{
-			thisRewardAndFeatureValues = calcReward(allPosNextMoves.get(i));
+			thisRewardAndFeatureValues = calcReward(allPosNextMoves.get(i), thisBoard);
 			
 			if(reward == -1000000.0 || thisRewardAndFeatureValues[0] > reward)
 			{
@@ -131,17 +135,19 @@ public class RewardFunction extends ConsoleProgram
 		String f7 = "kingsInOpposition";
 		String f8 = "blackKingInStaleMate";
 		String f9 = "blackKingInCheckMate";
+		String f10 = "distanceBetweenWhiteKingAndBlackKing";
 		
 		//featureNames.add(f0);
-		//featureNames.add(f1);
+		featureNames.add(f1);
 		featureNames.add(f2);		
 		//featureNames.add(f3);
 		//featureNames.add(f4);
 		featureNames.add(f5);
-		featureNames.add(f6);
-		featureNames.add(f7);
-		featureNames.add(f8);
-		featureNames.add(f9);
+		//featureNames.add(f6);
+		//featureNames.add(f7);
+		//featureNames.add(f8);
+		//featureNames.add(f9);
+		featureNames.add(f10);
 
 	}
 	
@@ -149,10 +155,10 @@ public class RewardFunction extends ConsoleProgram
 	- calculate the value of the evaluation function given a boardposition
 	- return this reward and the featurevalues in that boardposition
 	*/	
-	public double[] calcReward(BoardPosition pos)
+	public double[] calcReward(BoardPosition pos, Chessboard thisBoard)
 	{	
-		Chessboard thisBoard = new Chessboard(pos);
-				
+		thisBoard.setBoardPosition(pos);
+		
 		//thisBoard.printBoard();		
 				
 		// make a (virtual) random move with the black king
@@ -165,18 +171,18 @@ public class RewardFunction extends ConsoleProgram
 		///////////////// Feature rewards:
 
 		//double featureValue0 = thisFC.squaresOfKingvsRook();
-		//double featureValue1 = thisFC.noOfPosSquaresk();
+		double featureValue1 = thisFC.noOfPosSquaresk();
 		double featureValue2 = thisFC.distanceToEdgeBlackKing();
 		//double featureValue3 = thisFC.distanceBetweenWhiteRookAndBlackKing();
 		//double featureValue4 = thisFC.kingProtectsRook();
 		double featureValue5 = thisFC.threatenedRook();
-		double featureValue6 = thisFC.rookLost();
-		double featureValue7 = thisFC.kingsInOpposition();
-		double featureValue8 = thisFC.blackKingInStaleMate();
-		double featureValue9 = thisFC.blackKingInCheckMate();
+		//double featureValue6 = thisFC.rookLost();
+		//double featureValue7 = thisFC.kingsInOpposition();
+		//double featureValue8 = thisFC.blackKingInStaleMate();
+		//double featureValue9 = thisFC.blackKingInCheckMate();
+		double featureValue10 = thisFC.distanceBetweenWhiteKingAndBlackKing();		
 				
-				
-		double[] rewardAndFeatureValues = {0.0, featureValue2, featureValue5, featureValue6,featureValue7,featureValue8,featureValue9};//, featureValue8, featureValue9};//, featureValue5};
+		double[] rewardAndFeatureValues = {0.0, featureValue1, featureValue2, featureValue5, featureValue10};//,featureValue5, featureValue10};//, featureValue9};//, featureValue5};
 			
 		double evaluation;
 				
@@ -195,7 +201,7 @@ public class RewardFunction extends ConsoleProgram
 		{
 			featureValues.get(i).add(rewardAndFeatureValues[i+1]);
 		}
-		//System.out.print(rewardAndFeatureValues[5]);
+		//System.out.println(rewardAndFeatureValues[3]);
 	}
 	
 	public void clearFeatureValues()

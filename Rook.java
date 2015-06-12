@@ -26,6 +26,7 @@ public class Rook extends Piece
 	public Rook(GPoint coor, Chessboard board)
 	{
 		super(coor, board);
+		rookAlive = true;
 	}
 	
 	public boolean randomMoveR()

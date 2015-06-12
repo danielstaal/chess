@@ -191,6 +191,16 @@ public class FeatureCalculation
 		return normaliseFeature(totalDis, (thisBoard.getCBSize()-1)*(thisBoard.getCBSize()-1));
 	}
 	
+	public double distanceBetweenWhiteKingAndBlackKing()
+	{
+		double xDistance = Math.abs(thisBoard.whiteKing.getx() - thisBoard.blackKing.getx());
+		double yDistance = Math.abs(thisBoard.whiteKing.gety() - thisBoard.blackKing.gety());
+		
+		double totalDis = xDistance + yDistance;
+		
+		return normaliseFeature(totalDis, (thisBoard.getCBSize()-1)*(thisBoard.getCBSize()-1));
+	}
+	
 	public double rookChecksBlackKing()
 	{
 		if(!thisBoard.blackKing.notCheckR(blackKingCoor))

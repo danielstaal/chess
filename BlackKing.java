@@ -22,7 +22,7 @@ public class BlackKing extends Piece
 	
 	private boolean rookIsTaken = false;
 	
-	private boolean alwaysTakingRook = false;
+	private static boolean alwaysTakingRook = true;
 	
 	public BlackKing(GPoint coor, Chessboard board)
 	{
@@ -209,6 +209,7 @@ public class BlackKing extends Piece
 	
 	private void takeTheRook(GPoint kCoor)
 	{
+		//System.out.print("rooktaken");
 		CB.rook.setRookAlive(false);
 		CB.blackKing.setx((int)kCoor.getX());
 		CB.blackKing.sety((int)kCoor.getY());

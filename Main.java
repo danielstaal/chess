@@ -41,10 +41,10 @@ public class Main extends ConsoleProgram
 	private boolean randomMoves = false;
 	
 	/* random initial positions */
-	private boolean randomPositions = true;
+	private boolean randomPositions = false;
 	
 	/* use earlier calculated parameter vector testData */
-	private boolean useTestData = true;
+	private boolean useTestData = false;
 	
 	/* do you want to save the updated weights and overwrite the last ones? */
 	private boolean savingWeights = true;	
@@ -53,13 +53,13 @@ public class Main extends ConsoleProgram
 	private boolean testing = false;
 	
 	/* number of games to be played by the agents */
-	private double numberOfGames = 700;
+	private double numberOfGames = 500;
 	
 	/* max number of moves */
 	private int maxNumberOfMoves = 20;
 	
 	/* number of features used in the parameter vector*/
-	private int numberOfFeatures = 6;
+	private int numberOfFeatures = 4;
 	
 	/* number of games per which terminal states are written */
 	private int writePlotPerNumber = 100;
@@ -68,16 +68,16 @@ public class Main extends ConsoleProgram
 	private boolean plotting = true;
 	
 	/* initial position */
-	static private GPoint blackKing = new GPoint(0,0);
-	static private GPoint whiteKing = new GPoint(0,2);
-	static private GPoint rook = new GPoint(3,3);
+	private GPoint blackKing = new GPoint(1,0);
+	private GPoint whiteKing = new GPoint(2,2);
+	private GPoint rook = new GPoint(3,3);
 	
 	/* terminal state rewards */
 	private double checkMateReward = 2.0;
 	private double staleMateReward = 2.0;
 	private double remisReward = -2.0;
 	
-	private boolean alwaysTakingRookFlag = false;
+	private boolean alwaysTakingRookFlag = true;
 	
 /////////////////////////////////////////////////////////////////////////
 // Do NOT change these variables
@@ -92,7 +92,7 @@ public class Main extends ConsoleProgram
 	private ArrayList<Integer> posSquaresk;
 	
 	/* Starting parametervector and feature values */
-	private static ArrayList<Double> parVector = new ArrayList<Double>(); 
+	private ArrayList<Double> parVector = new ArrayList<Double>(); 
 	
 	/* initiate agent */
 	private Agent agent = new Agent(chessBoard, parVector, randomMoves);
