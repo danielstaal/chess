@@ -23,7 +23,6 @@ public class AllNextStates
 /////////////////////////////////////////////////////////////////////////
 // To find the move with the highest reward
 /////////////////////////////////////////////////////////////////////////	
-	//test
 	private Chessboard CB;
 	
 	public AllNextStates(Chessboard board)
@@ -40,7 +39,7 @@ public class AllNextStates
 	public ArrayList<BoardPosition> findAllPosNextStates()
 	{
 		ArrayList<BoardPosition> posPositions = new ArrayList<BoardPosition>();
-		
+        //test
 		ArrayList<BoardPosition> posKPositions = CB.whiteKing.posMovesK();
 		ArrayList<BoardPosition> posRPositions = CB.rook.posMovesR();
 		
