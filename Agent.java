@@ -51,6 +51,11 @@ public class Agent
 	
 	private boolean randomMoves;
 	
+	/* reference reward - exploration/exploitation */
+	private ReferenceReward refReward = new ReferenceReward();
+	
+	public int numberOfRandomMoves = 0;
+	
 	
 	public Agent(Chessboard board, ArrayList<Double> parVec, boolean random)
 	{
@@ -64,9 +69,16 @@ public class Agent
 		randomMoves = random;
 	}
 
-	public void makeMove()
+	public void makeMove(int checkMates, int remis)
 	{
-		if(randomMoves){randomWhiteMove();}
+		boolean exploration = true;
+		if(refReward.checkExploitation(checkMates, remis))
+		{
+			exploration = false;
+		}
+		
+		// checkExploitation by checking checkmates > remis
+		if(randomMoves || exploration){randomWhiteMove();}
 		else{whiteMove();}
 	}
 
@@ -90,6 +102,12 @@ public class Agent
 			}
 			rand = extra.randInt(0,1);
 		}
+		
+		// add this to feature value arrays
+		double[] thisRewardAndFeatureValues = rewardFunction.calcReward(chessBoard.thisPosition, chessBoard);
+		
+		rewardFunction.stateValues.add(thisRewardAndFeatureValues[0]);
+		rewardFunction.addFeatureValues(thisRewardAndFeatureValues);
 	}
 		
 	private void whiteMove()

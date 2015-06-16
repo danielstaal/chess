@@ -18,34 +18,38 @@ import java.io.*;
 
 public class ReferenceReward extends ConsoleProgram
 {
-	private double refReward = 0.1;
-	
-	private double alpha = 0.1;
-	
+	private Extra extra = new Extra();	
+		
 	public ReferenceReward()
 	{
 	}
 	
-	public boolean checkExploitation(double reward)
+	public boolean checkExploitation(int checkMates, int remis)
 	{
-		double tempRefReward = refReward;
+		// for simple Exploration exploitation
+		double difference = ((double)checkMates+1)/(remis+1);
+		int chance = (int)(100*difference);
+	
+		int rand = extra.randInt(0,chance);
+		//System.out.println(rand);
 		
-		updateRefReward(refReward + alpha * (reward-refReward));
+		int randCheck = extra.randInt(0,1);
 		
-		if(tempRefReward > reward)
+		if(checkMates < remis && rand < 50 && randCheck == 1)
 		{
 			return false;
-		}	
+		}
 		return true;
 	}
-	
-	private void updateRefReward(double newRefReward)
-	{
-		refReward = newRefReward;
-	}
-
-
 }
+
+
+
+
+
+
+
+
 
 
 

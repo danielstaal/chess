@@ -68,9 +68,9 @@ public class Main extends ConsoleProgram
 	private boolean plotting = true;
 	
 	/* initial position */
-	private GPoint blackKing = new GPoint(1,0);
-	private GPoint whiteKing = new GPoint(2,2);
-	private GPoint rook = new GPoint(3,3);
+	private GPoint blackKing = new GPoint(3,1);
+	private GPoint whiteKing = new GPoint(3,3);
+	private GPoint rook = new GPoint(1,3);
 	
 	/* terminal state rewards */
 	private double checkMateReward = 2.0;
@@ -98,7 +98,7 @@ public class Main extends ConsoleProgram
 	private Agent agent = new Agent(chessBoard, parVector, randomMoves);
 	
 	/* initiate Testing object */
-	private Tester tester = new Tester(chessBoard, agent, initPos);
+//	private Tester tester = new Tester(chessBoard, agent, initPos);
 	
 	/* File writer */
 	private WriteToFile fileWriter = new WriteToFile(parVector);
@@ -172,7 +172,7 @@ public class Main extends ConsoleProgram
 	{
 		if(testing)
 		{
-			tester.test();
+//			tester.test();
 		}
 		else
 		{
@@ -286,7 +286,7 @@ public class Main extends ConsoleProgram
 			agent.pastStates.add(chessBoard.getBoardPosition());
 			
 			// white player makes a move
-			agent.makeMove();
+			agent.makeMove(checkMates, remis);
 
 			ifPrinting("After white move");
 

@@ -45,9 +45,7 @@ public class RewardFunction extends ConsoleProgram
 	/* multidimensional arraylist to keep track of feature values */
 	public ArrayList<ArrayList<Double>> featureValues = new ArrayList<ArrayList<Double>>();
 	
-	/* reference reward - exploration/exploitation */
-	private ReferenceReward refReward = new ReferenceReward();
-	
+
 	public RewardFunction(AllNextStates aPNS, Chessboard board, ArrayList<Double> pV, ArrayList<Double> sV)
 	{
 		allPosNextStates = aPNS;
