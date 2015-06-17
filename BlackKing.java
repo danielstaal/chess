@@ -22,7 +22,7 @@ public class BlackKing extends Piece
 	
 	private boolean rookIsTaken = false;
 	
-	private static boolean alwaysTakingRook = true;
+	private static boolean alwaysTakingRook = false;
 	
 	public BlackKing(GPoint coor, Chessboard board)
 	{
@@ -223,82 +223,6 @@ public class BlackKing extends Piece
 	{
 		alwaysTakingRook = flag;
 	}
-	
-//	private void randomMovek()
-//	{	
-//		int random = extra.randInt(1,8);
-//		int testkx = CB.blackKing.getx();
-//		int testky = CB.blackKing.gety();
-//		boolean legalMove = false;
-//		
-//		GPoint oldkCoor = new GPoint(CB.blackKing.getx(), CB.blackKing.gety());
-//		
-//		// to check if the black king has no moves
-//		int[] tried = new int[8];
-//		int[] all = {1,2,3,4,5,6,7,8};
-//		
-//		while(!legalMove)
-//		{
-//			testkx = CB.blackKing.getx();
-//			testky = CB.blackKing.gety();
-//			random = extra.randInt(1,8);
-//	
-//			if(extra.sameArray(tried, all))
-//			{
-//				if(kingNotInCheck(oldkCoor))
-//				{
-//					CB.setStaleMate(true);
-//				}
-//				else{CB.setCheckMate(true);}
-//				break;
-//			}
-//		
-//			switch (random) {
-//		        case 1:  testkx--;
-//		        		 testky--;
-//		                 break;
-//		        case 2:  testky--;
-//		                 break;
-//		        case 3:  testkx++;
-//		        		 testky--;
-//		                 break;
-//		        case 4:  testkx--;
-//		                 break;
-//		        case 5:  testkx++;
-//		                 break;
-//		        case 6:  testkx--;
-//		        		 testky++;
-//		                 break;
-//		        case 7:  testky++;
-//		                 break;
-//		        case 8:  testkx++;
-//		        		 testky++;
-//		                 break;
-//		    }
-//		    GPoint kCoor = new GPoint(testkx, testky);
-//		    legalMove = checkIfLegalMovek(kCoor);
-//		         
-//		    if(legalMove)
-//		    {   	
-//		    	CB.blackKing.setx(testkx);
-//		    	CB.blackKing.sety(testky);
-//		    	if(CB.blackKing.getx() == CB.rook.getx() && CB.blackKing.gety() == CB.rook.gety())
-//		    	{
-//		    		CB.rook.setRookAlive(false);
-//		    	}
-//		    	CB.fillEmptyChessboard();
-//		    	CB.addKRKtoChessboard();
-//		    }
-//		    else
-//		    {
-//		    	tried[random-1] = random;
-//		    }
-//		    if(!CB.rook.getRookAlive())
-//		    {
-//		    	break;
-//		    }
-//     	}
-//    }
 }
 
 

@@ -45,7 +45,6 @@ public class RewardFunction extends ConsoleProgram
 	/* multidimensional arraylist to keep track of feature values */
 	public ArrayList<ArrayList<Double>> featureValues = new ArrayList<ArrayList<Double>>();
 	
-
 	public RewardFunction(AllNextStates aPNS, Chessboard board, ArrayList<Double> pV, ArrayList<Double> sV)
 	{
 		allPosNextStates = aPNS;
@@ -108,11 +107,6 @@ public class RewardFunction extends ConsoleProgram
 			}
 		}
 		
-//		if(refReward.checkExploitation(reward))
-//		{
-//			
-//		}
-		
 		// add the reward to the arraylist of rewards of past states
 		stateValues.add(reward);
 		addFeatureValues(thisRewardAndFeatureValues);
@@ -138,11 +132,11 @@ public class RewardFunction extends ConsoleProgram
 		//featureNames.add(f0);
 		featureNames.add(f1);
 		featureNames.add(f2);		
-		//featureNames.add(f3);
+		featureNames.add(f3);
 		//featureNames.add(f4);
 		featureNames.add(f5);
 		//featureNames.add(f6);
-		//featureNames.add(f7);
+		featureNames.add(f7);
 		//featureNames.add(f8);
 		//featureNames.add(f9);
 		featureNames.add(f10);
@@ -171,16 +165,16 @@ public class RewardFunction extends ConsoleProgram
 		//double featureValue0 = thisFC.squaresOfKingvsRook();
 		double featureValue1 = thisFC.noOfPosSquaresk();
 		double featureValue2 = thisFC.distanceToEdgeBlackKing();
-		//double featureValue3 = thisFC.distanceBetweenWhiteRookAndBlackKing();
+		double featureValue3 = thisFC.distanceBetweenWhiteRookAndBlackKing();
 		//double featureValue4 = thisFC.kingProtectsRook();
 		double featureValue5 = thisFC.threatenedRook();
 		//double featureValue6 = thisFC.rookLost();
-		//double featureValue7 = thisFC.kingsInOpposition();
+		double featureValue7 = thisFC.kingsInOpposition();
 		//double featureValue8 = thisFC.blackKingInStaleMate();
 		//double featureValue9 = thisFC.blackKingInCheckMate();
 		double featureValue10 = thisFC.distanceBetweenWhiteKingAndBlackKing();		
 				
-		double[] rewardAndFeatureValues = {0.0, featureValue1, featureValue2, featureValue5, featureValue10};//,featureValue5, featureValue10};//, featureValue9};//, featureValue5};
+		double[] rewardAndFeatureValues = {0.0, featureValue1, featureValue2, featureValue3, featureValue5, featureValue7, featureValue10};//,featureValue5, featureValue10};//, featureValue9};//, featureValue5};
 			
 		double evaluation;
 				

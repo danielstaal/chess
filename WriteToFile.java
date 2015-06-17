@@ -20,7 +20,7 @@ public class WriteToFile extends ConsoleProgram
 {
 
 	/* To distinguish datafiles */
-	private int numberOfDataFile = 1;
+	private static int numberOfDataFile = 1;
 	
 	ArrayList<Double> parVector;
 	
@@ -32,7 +32,7 @@ public class WriteToFile extends ConsoleProgram
 	public void writeFileParVector()
 	{
 		// FEATURE: num pos squares
-		double[] writeParVector = new double[parVector.size()];
+		double[] writeParVector = new double[parVector.size()+1];
 		for(int i=0; i<parVector.size();i++)
 		{
 			writeParVector[i] = parVector.get(i);
@@ -75,10 +75,12 @@ public class WriteToFile extends ConsoleProgram
 	}
 	
 	// to read in the parameter vector (weights) from an earlier test
-	public void readFile()
+	public void readFile(int index)
 	{
 		try {
-		        BufferedReader in = new BufferedReader(new FileReader("data/testData1.txt"));
+				String inFile = "data/testData" + index + ".txt";
+		
+		        BufferedReader in = new BufferedReader(new FileReader(inFile));
 		        String str;
 		        str = in.readLine();
 		        

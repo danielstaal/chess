@@ -56,13 +56,13 @@ public class Main extends ConsoleProgram
 	private boolean twoRewardFunctions = true;
 	
 	/* number of games to be played by the agents */
-	private double numberOfGames = 600;
+	private double numberOfGames = 500;
 	
 	/* max number of moves */
 	private int maxNumberOfMoves = 20;
 	
 	/* number of features used in the parameter vector*/
-	private int numberOfFeatures = 6;
+	private int numberOfFeatures = 5;
 	
 	/* number of games per which terminal states are written */
 	private int writePlotPerNumber = 50;
@@ -78,7 +78,7 @@ public class Main extends ConsoleProgram
 	/* terminal state rewards */
 	private double checkMateReward = 2.0;
 	private double staleMateReward = 1.0;
-	private double rookLostReward = -2.0;
+	private double remisReward = -2.0;
 	
 	private double kingOnEdgeReward = 2.0;
 	
@@ -114,10 +114,10 @@ public class Main extends ConsoleProgram
 	/* did the game reach a terminal state */
 	private boolean result = true;	
 
-	/* checkmates,stalemates,rookLost */
+	/* checkmates,stalemates,remis */
 	private int checkMates = 0;
 	private int staleMates = 0;
-	private int rookLost = 0;
+	private int remis = 0;
 	
 	private int kingOnEdges = 0;
 		
@@ -219,17 +219,18 @@ public class Main extends ConsoleProgram
 			{
 				plotter.setCheckMateArray(checkMates, i/writePlotPerNumber);
 				plotter.setStaleMateArray(staleMates, i/writePlotPerNumber);
-				plotter.setRemisArray(rookLost, i/writePlotPerNumber);
+				plotter.setRemisArray(remis, i/writePlotPerNumber);
 	
 				print("after ");print(i);println(" games:");
 				print("checkmates:");println(checkMates);
 				print("stalemates:");println(staleMates);
-				print("rookLost:");println(rookLost);
+				print("remis:");println(remis);
+				print("ratioOfRandomMoves:");println(agent.numberOfRandomMoves);
 				
 				// reset values, this is optional
 				checkMates = 0;
 				staleMates = 0;
-				rookLost = 0;
+				remis = 0;
 				agent.numberOfRandomMoves = 0;
 			}
 		
@@ -242,8 +243,8 @@ public class Main extends ConsoleProgram
 			// if a terminal state is achieved, update parameters
 			if(result && !randomMoves && numOfMoves>1)
 			{
-				if(twoRewardFunctions){agent.update.learnOnData();}
-				agent.update2.learnOnData();
+				agent.update.learnOnData();
+				if(twoRewardFunctions){agent.update2.learnOnData();}
 			}
 			resetValues();
 		}
@@ -264,10 +265,6 @@ public class Main extends ConsoleProgram
 			printChessboard();
 		}
 		
-		// set num of moves to 0
-		numOfMoves = 0;
-	
-		
 		if(twoRewardFunctions)
 		{
 			playMoves();
@@ -286,7 +283,10 @@ public class Main extends ConsoleProgram
 	}
 
 	private void playMoves()
-	{	
+	{
+		// set num of moves to 0
+		numOfMoves = 0;
+		
 		// play till max number of moves is reached
 		while(numOfMoves < maxNumberOfMoves)
 		{	
@@ -304,7 +304,7 @@ public class Main extends ConsoleProgram
 			agent.pastStates.add(chessBoard.getBoardPosition());
 			
 			// white player makes a move
-			agent.makeMove(1, checkMates, rookLost);
+			agent.makeMove(1, checkMates, remis);
 
 			ifPrinting("After white move");
 
@@ -336,6 +336,8 @@ public class Main extends ConsoleProgram
 	*/	
 	private void playMoves2()
 	{
+		// set num of moves to 0
+		numOfMoves = 0;
 		
 		// play till max number of moves is reached
 		while(numOfMoves < maxNumberOfMoves)
@@ -354,7 +356,7 @@ public class Main extends ConsoleProgram
 			agent.pastStates2.add(chessBoard.getBoardPosition());
 			
 			// white player makes a move
-			agent.makeMove(2, checkMates, rookLost);
+			agent.makeMove(2, checkMates, remis);
 
 			ifPrinting("After white move");
 
@@ -386,9 +388,9 @@ public class Main extends ConsoleProgram
 		}
 		else if(!chessBoard.rook.getRookAlive())
 		{
-			rookLost++;
-			if(index == 1){agent.stateValues.add(rookLostReward);}
-			else{agent.stateValues2.add(rookLostReward);}
+			remis++;
+			if(index == 1){agent.stateValues.add(remisReward);}
+			else{agent.stateValues2.add(remisReward);}
 		}
 		else if(chessBoard.getStaleMate())
 		{
@@ -449,7 +451,7 @@ public class Main extends ConsoleProgram
 		print((int)numberOfGames);println(" games played");
 		print("checkmates:");println(checkMates);
 		print("stalemates:");println(staleMates);
-		print("rookLost:");println(rookLost);
+		print("remis:");println(remis);
 		print("kingOnEdge:");println(kingOnEdges);
 		print("numberOfRandomMoves:");println(agent.numberOfRandomMoves);
 		print("Mean number of moves per game:");println(mean/numberOfGames);

@@ -123,8 +123,8 @@ public class Rook extends Piece
 	{
 		BoardPosition boardPos;
 			
-		GPoint kCoor = CB.blackKing.getCoordinates();
-		GPoint KCoor = CB.whiteKing.getCoordinates();
+		GPoint kCoor = new GPoint(CB.blackKing.getx(), CB.blackKing.gety());
+		GPoint KCoor = new GPoint(CB.whiteKing.getx(), CB.whiteKing.gety());
 		
 		boolean legalMove = checkIfLegalMoveR(RCoor);
 		if(legalMove)

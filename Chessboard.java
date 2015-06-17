@@ -160,12 +160,13 @@ public class Chessboard extends ConsoleProgram
 		whiteKing.sety((int)pos.getK().getY());
 		rook.setx((int)pos.getR().getX());
 		rook.sety((int)pos.getR().getY());
-
-		fillEmptyChessboard();
-		addKRKtoChessboard();		
+		
 		staleMate = false;
 		checkMate = false;
 		rook.setRookAlive(true);
+		
+		fillEmptyChessboard();
+		addKRKtoChessboard();
 	}
 	
 	// reset to a random position
@@ -213,12 +214,13 @@ public class Chessboard extends ConsoleProgram
 			//Recursion!
 			resetRandom();
 		}
-		
-		fillEmptyChessboard();
-		addKRKtoChessboard();
 		staleMate = false;
 		checkMate = false;
 		rook.setRookAlive(true);
+
+		fillEmptyChessboard();
+		addKRKtoChessboard();
+
 	}
 	
 	public void printBoard()
