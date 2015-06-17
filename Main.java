@@ -53,10 +53,10 @@ public class Main extends ConsoleProgram
 	private boolean testing = false;
 	
 	/* 1 or 2 evaluation functions? */
-	private boolean twoRewardFunctions = true;
+	private boolean twoRewardFunctions = false;
 	
 	/* number of games to be played by the agents */
-	private double numberOfGames = 600;
+	private double numberOfGames = 500;
 	
 	/* max number of moves */
 	private int maxNumberOfMoves = 20;
