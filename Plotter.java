@@ -83,25 +83,18 @@ public class Plotter extends ConsoleProgram
 		remisArray[index] += value;
 	}
 	
-	public void printMeanArrays(double numberOfIterations)
+	public void printMeanArrays(double index)
 	{
-		for(int i=0;i<checkMateArray.length;i++)
-		{
-			checkMateArray[i] /= numberOfIterations;
-			staleMateArray[i] /= numberOfIterations;
-			remisArray[i] /= numberOfIterations;
-		}
-
 		System.out.print("[");
 		for(int i=0;i<checkMateArray.length;i++)
 		{
-			System.out.print(checkMateArray[i]);
+			System.out.print(checkMateArray[i]/index);
 			System.out.print(" ");
-			System.out.print(staleMateArray[i]);
+			System.out.print(staleMateArray[i]/index);
 			System.out.print(" ");
-			System.out.print(remisArray[i]);
+			System.out.print(remisArray[i]/index);
 			System.out.print(";");
 		}
-		System.out.print("]");
+		System.out.println("]");
 	}
 }

@@ -41,7 +41,7 @@ public class Main extends ConsoleProgram
 	private boolean randomMoves = false;
 	
 	/* random initial positions */
-	private boolean randomPositions = false;
+	private boolean randomPositions = true;
 	
 	/* use earlier calculated parameter vector testData */
 	private boolean useTestData = false;
@@ -152,12 +152,14 @@ public class Main extends ConsoleProgram
 		
 		for(int i=0;i<numberOfIterations;i++)
 		{
+			print("Number of Iteration:");println(i);	
+			
 			playNumberOfIterations();
 			
-			setLastPlotterArrayValues();
+			plotter.printMeanArrays(i+1);
 		}
 		
-		plotter.printMeanArrays(numberOfIterations);
+		println(agent.rewardFunction2.hits);
 		
 		// print timer
 		long endTime = System.nanoTime();
@@ -188,6 +190,8 @@ public class Main extends ConsoleProgram
 		// play the games
 		playGamesLearnOnData();
 		
+		setLastPlotterArrayValues();
+	
 		// print the result
 		//printResult();
 	}

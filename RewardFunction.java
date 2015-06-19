@@ -44,6 +44,8 @@ public class RewardFunction extends ConsoleProgram
 	
 	/* multidimensional arraylist to keep track of feature values */
 	public ArrayList<ArrayList<Double>> featureValues = new ArrayList<ArrayList<Double>>();
+
+	public int hits = 0;
 	
 	public RewardFunction(AllNextStates aPNS, Chessboard board, ArrayList<Double> pV, ArrayList<Double> sV)
 	{
@@ -149,6 +151,8 @@ public class RewardFunction extends ConsoleProgram
 	*/	
 	public double[] calcReward(BoardPosition pos, Chessboard thisBoard)
 	{	
+		hits++;
+	
 		thisBoard.setBoardPosition(pos);
 		
 		//thisBoard.printBoard();		
