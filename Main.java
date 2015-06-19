@@ -55,25 +55,28 @@ public class Main extends ConsoleProgram
 	/* 1 or 2 evaluation functions? */
 	private boolean twoRewardFunctions = false;
 	
+	/* number of iterations */
+	private double numberOfIterations = 10;
+	
 	/* number of games to be played by the agents */
-	private double numberOfGames = 500;
+	private double numberOfGames = 200;
 	
 	/* max number of moves */
 	private int maxNumberOfMoves = 20;
 	
 	/* number of features used in the parameter vector*/
-	private int numberOfFeatures = 6;
+	private int numberOfFeatures = 5;
 	
 	/* number of games per which terminal states are written */
-	private int writePlotPerNumber = 50;
+	private int writePlotPerNumber = 20;
 	
 	/* do you want a simple plot? */
 	private boolean plotting = true;
 	
 	/* initial position */
-	private GPoint blackKing = new GPoint(3,1);
-	private GPoint whiteKing = new GPoint(3,3);
-	private GPoint rook = new GPoint(1,3);
+	private GPoint blackKing = new GPoint(2,2);
+	private GPoint whiteKing = new GPoint(0,3);
+	private GPoint rook = new GPoint(0,0);
 	
 	/* terminal state rewards */
 	private double checkMateReward = 2.0;
@@ -138,6 +141,7 @@ public class Main extends ConsoleProgram
 /////////////////////////////////////////////////////////////////////////
 
 	
+	
 	public void run()
 	{
 		// start timer
@@ -146,6 +150,30 @@ public class Main extends ConsoleProgram
 		// to set whether black king should alwaysTakingRook if possible
 		chessBoard.blackKing.setAlwaysTakingRook(alwaysTakingRookFlag);
 		
+		for(int i=0;i<numberOfIterations;i++)
+		{
+			playNumberOfIterations();
+			
+			setLastPlotterArrayValues();
+		}
+		
+		plotter.printMeanArrays(numberOfIterations);
+		
+		// print timer
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime)/1000000000;
+		print("Time:");print(duration);print("seconds");
+		
+		// plot values if requested
+		if(plotting){plotter.plotValues();}
+	}
+	
+/////////////////////////////////////////////////////////////////////////
+// Chess playing
+/////////////////////////////////////////////////////////////////////////
+	
+	private void playNumberOfIterations()
+	{
 		// initiate weight vector
 		agent.update.initiateParVector(numberOfFeatures);
 		agent.update2.initiateParVector(numberOfFeatures);
@@ -161,20 +189,21 @@ public class Main extends ConsoleProgram
 		playGamesLearnOnData();
 		
 		// print the result
-		printResult();
-		
-		// print timer
-		long endTime = System.nanoTime();
-		long duration = (endTime - startTime)/1000000000;
-		print("Time:");print(duration);print("seconds");
-		
-		// plot values if requested
-		if(plotting){plotter.plotValues();}
+		//printResult();
 	}
 	
-/////////////////////////////////////////////////////////////////////////
-// Chess playing
-/////////////////////////////////////////////////////////////////////////
+	private void setLastPlotterArrayValues()
+	{
+		plotter.setCheckMateArray(checkMates, (int)numberOfGames/writePlotPerNumber);
+		plotter.setStaleMateArray(staleMates, (int)numberOfGames/writePlotPerNumber);
+		plotter.setRemisArray(rookLost, (int)numberOfGames/writePlotPerNumber);
+	
+		// reset values, this is optional
+		checkMates = 0;
+		staleMates = 0;
+		rookLost = 0;
+		agent.numberOfRandomMoves = 0;
+	}
 	
 	/*
 	- test or play games
@@ -209,10 +238,10 @@ public class Main extends ConsoleProgram
 	{
 		for(int i=0; i<numberOfGames; i++)
 		{
-			if(i == numberOfGames - 1)
-			{
-				printing = true;
-			}
+//			if(i == numberOfGames - 1)
+//			{
+//				printing = true;
+//			}
 		
 			// see progress per writePlotPerNumber of games
 			if(i % writePlotPerNumber == 0)

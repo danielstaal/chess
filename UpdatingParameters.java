@@ -42,11 +42,21 @@ public class UpdatingParameters extends ConsoleProgram
 	
 	public void initiateParVector(int numOfFeatures)
 	{
-		for(int i=0;i<numOfFeatures;i++)
-		{	
-			parVector.add(startingParValue);
-			// to keep track of all calculated feature values	
-			rewardFunction.featureValues.add(new ArrayList<Double>());
+		if(parVector.size() == 0)
+		{
+			for(int i=0;i<numOfFeatures;i++)
+			{	
+				parVector.add(startingParValue);
+				// to keep track of all calculated feature values	
+				rewardFunction.featureValues.add(new ArrayList<Double>());
+			}
+		}
+		else
+		{
+			for(int i=0;i<parVector.size();i++)
+			{
+				parVector.set(i, startingParValue);
+			}
 		}		
 	}
 	

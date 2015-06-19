@@ -24,7 +24,7 @@ import java.io.*;
 public class Chessboard extends ConsoleProgram
 {
 	/* Size of Chessboard*/
-	private int size = 6;
+	private int size = 4;
 
 	/* the chessboard array */
 	private char[][] CBarray;

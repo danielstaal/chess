@@ -72,14 +72,36 @@ public class Plotter extends ConsoleProgram
 	
 	public void setCheckMateArray(int value, int index)
 	{
-		checkMateArray[index] = value;
+		checkMateArray[index] += value;
 	}
 	public void setStaleMateArray(int value, int index)
 	{
-		staleMateArray[index] = value;
+		staleMateArray[index] += value;
 	}
 	public void setRemisArray(int value, int index)
 	{
-		remisArray[index] = value;
+		remisArray[index] += value;
+	}
+	
+	public void printMeanArrays(double numberOfIterations)
+	{
+		for(int i=0;i<checkMateArray.length;i++)
+		{
+			checkMateArray[i] /= numberOfIterations;
+			staleMateArray[i] /= numberOfIterations;
+			remisArray[i] /= numberOfIterations;
+		}
+
+		System.out.print("[");
+		for(int i=0;i<checkMateArray.length;i++)
+		{
+			System.out.print(checkMateArray[i]);
+			System.out.print(" ");
+			System.out.print(staleMateArray[i]);
+			System.out.print(" ");
+			System.out.print(remisArray[i]);
+			System.out.print(";");
+		}
+		System.out.print("]");
 	}
 }
